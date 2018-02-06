@@ -29,7 +29,7 @@ class SiteUser():
 class UserService():
 
     @staticmethod
-    def query_user(username=None):
+    def query_user_by_name(username=None):
         """
         根据用户昵称查询
 
@@ -54,6 +54,34 @@ class UserService():
             return None
 
         raise NotImplementedError('不支持的查询方式')
+
+    @staticmethod
+    def query_user_by_id(userid=None):
+        """
+        根据用户昵称查询
+
+        Returns:
+            account 不存在时返回 None
+        """
+        payload = {}
+        if userid:
+            rv = db.session.query(User).filter_by(
+                id=userid).first()
+            if rv:
+                payload['username'] = rv.username
+                payload['nickname'] = rv.nickname
+                payload['realname'] = rv.realname
+                payload['password'] = rv.password
+                payload['phone'] = rv.phone
+                payload['gender'] = rv.gender
+                payload['mail'] = rv.mail
+                payload['qq'] = rv.qq
+
+                return payload
+            return None
+
+        raise NotImplementedError('不支持的查询方式')
+
 
     @staticmethod
     def create_user(userinfo):

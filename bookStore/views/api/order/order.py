@@ -12,15 +12,12 @@ from bookStore.views import make_api_response
 
 @exports('/order/query', methods=['GET'])
 @login_required
-def query_orders(userid=None):
+def query_orders():
     """
     @api {GET} /order/query 查询用户对应的订单信息
     @apiGroup Order
     @apiVersion 0.0.1
     @apiDescription 用于查询用户订单信息
-    @apiParam {Number} userid 用户id
-    @apiParamExample {json} 请求样例：
-                  order/query?userid=1234
     @apiSuccess (200) {String} msg 信息
     @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
     @apiSuccessExample {json} 返回样例:
@@ -60,9 +57,6 @@ def query_order_detail():
     @apiGroup Order
     @apiVersion 0.0.1
     @apiDescription 用于查询用户订单信息
-    @apiParam {Number} orderid 订单id
-    @apiParamExample {json} 请求样例：
-                  order/detail?orderid=12
     @apiSuccess (200) {String} msg 信息
     @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
     @apiSuccessExample {json} 返回样例:

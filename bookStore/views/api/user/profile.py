@@ -8,19 +8,14 @@ from bookStore.views.api import exports
 from bookStore.views import make_api_response
 
 
-@exports('/profile/query', methods=['POST'])
+@exports('/profile/query', methods=['GET'])
 @login_required
 def query_user_info():
     """
-    @api {POST} /profile/query 查询用户信息
+    @api {GET} /profile/query 查询用户信息
     @apiGroup Users
     @apiVersion 0.0.1
     @apiDescription 用于查询用户资料
-    @apiParam {String} username 用户账户名
-    @apiParamExample {json} 请求样例：
-                    {
-                        "username": "bs"
-                    }
     @apiSuccess (200) {String} msg 信息
     @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
     @apiSuccessExample {json} 返回样例:
@@ -41,8 +36,8 @@ def query_user_info():
     @apiErrorExample {json} 返回样例:
                    {"status": "fail", "message": "用户不存在"}
     """
-    username = request.json['username']
-    userinfo = UserService.query_user(username=username)
+    user_id = current_user.id
+    userinfo = UserService.query_user_by_id(userid=user_id)
 
     if userinfo:
         return make_api_response(payload=userinfo)
@@ -90,7 +85,7 @@ def update_user_info():
         'qq': qq
     }
     # 创建用户的操作
-    ok = UserService.update_userinfo(userinfo)
+    UserService.update_userinfo(userinfo)
 
     return make_api_response()
 
