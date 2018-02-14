@@ -23,6 +23,9 @@ class Application(Flask):
                 os.path.basename(__file__), '../dev.cfg'))
             self.config.from_pyfile(dev_cfg, silent=True)
 
+        if os.path.exists('config_local.py'):
+            self.config.from_pyfile('../config_local.py')
+
     def prepare_login_manager(self):
         login_manager = LoginManager()
         login_manager.init_app(self)

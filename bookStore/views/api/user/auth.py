@@ -50,8 +50,6 @@ def login():
     login_user(user)
     app.logger.info('%s Login' % user.username)
 
-
-
     return make_api_response()
 
 
@@ -127,7 +125,7 @@ def register():
     if not user_name or not password:
         return make_api_response(message='参数错误：缺少用户名或密码', statusCode=400)
 
-    user = UserService.query_user(username=user_name)
+    user = UserService.query_user_by_name(username=user_name)
     logger.debug(user)
     if user is not None:
         return make_api_response(message='用户名已存在', statusCode=400)
@@ -146,8 +144,6 @@ def register():
     }
     # 创建用户的操作
     ok = UserService.create_user(userinfo)
-    if ok:
-        db.session.commit()
-    else:
-        err.message = '创建用户遇到错误'
+    db.session.commit()
+
     return make_api_response()

@@ -4,14 +4,16 @@ from sqlalchemy.sql.sqltypes import Integer, String, TIMESTAMP, DECIMAL
 
 from bookStore import db
 
-class Order(db.Model):
+
+class OrderInfo(db.Model):
     """
-    订单表
+    订单其他信息
     """
-    __table_name__ = 'order'
+    __table_name__ = 'order_info'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     order_id = Column(Integer)
+    user_id = Column(Integer)
     quantity = Column(Integer)
     origin_cost = Column(DECIMAL)
     actual_cost = Column(DECIMAL)

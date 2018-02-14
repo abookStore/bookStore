@@ -6,7 +6,7 @@ from bookStore import db
 
 class OrderDetail(db.Model):
     """
-    登录会员表
+    订单详细信息表
     """
     __table_name__ = 'order_detail'
 

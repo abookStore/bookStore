@@ -77,3 +77,5 @@ node_modules/
 .vscode/
 
 # front end dist
+
+config_local.py
