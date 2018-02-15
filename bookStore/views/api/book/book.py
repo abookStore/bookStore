@@ -7,7 +7,7 @@ from bookStore.service.book.book import BookService
 from bookStore.views.api import exports
 from bookStore.views import make_api_response
 
-@exports('/book/query_by_isbn/<isbn>', method=['GET'])
+@exports('/book/query_by_isbn/<isbn>', methods=['GET'])
 @login_required
 def query_book_by_isbn(isbn):
     """
@@ -23,7 +23,7 @@ def query_book_by_isbn(isbn):
     return make_api_response(message='缺少isbn')
 
 
-@exports('/book/query_by_name/<name>', method=['GET'])
+@exports('/book/query_by_name/<name>', methods=['GET'])
 @login_required
 def query_book_by_name(name):
     """
@@ -39,7 +39,7 @@ def query_book_by_name(name):
     return make_api_response(message='缺少isbn')
 
 
-@exports('/book/remove/<book_id>', method=['GET'])
+@exports('/book/remove/<book_id>', methods=['GET'])
 @login_required
 def book_remove(book_id):
     """
@@ -54,7 +54,7 @@ def book_remove(book_id):
             return make_api_response('书目id不存在')
     return make_api_response(message='缺少书目id')
 
-@exports('/book/update', method=['POST'])
+@exports('/book/update', methods=['POST'])
 @login_required
 def book_update():
     """
@@ -87,7 +87,7 @@ def book_update():
         return make_api_response(message='更新失败', statusCode=400)
 
 
-@exports('/book/add', method=['POST'])
+@exports('/book/add', methods=['POST'])
 @login_required
 def book_add():
     """
