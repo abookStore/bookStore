@@ -1,4 +1,10 @@
-CREATE TABLE `account` (
+SET NAMES utf8;
+
+CREATE DATABASE IF NOT EXISTS bookstore;
+
+USE bookstore;
+
+CREATE TABLE IF NOT EXISTS `account` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL COMMENT '用户id',
   `balance` decimal(11,2) DEFAULT NULL COMMENT '余额',

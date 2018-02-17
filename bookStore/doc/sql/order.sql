@@ -1,4 +1,10 @@
-CREATE TABLE `order` (
+SET NAMES utf8;
+
+CREATE DATABASE IF NOT EXISTS bookstore;
+
+USE bookstore;
+
+CREATE TABLE IF NOT EXISTS `order` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
   `order_id` int(20) DEFAULT NULL COMMENT '订单编号',
   `user_id` int(11) DEFAULT NULL COMMENT '用户编号',

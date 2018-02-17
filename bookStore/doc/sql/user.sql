@@ -1,4 +1,10 @@
-CREATE TABLE `user` (
+SET NAMES utf8;
+
+CREATE DATABASE IF NOT EXISTS bookstore;
+
+USE bookstore;
+
+CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(255) DEFAULT NULL COMMENT '用户名',
   `nickname` varchar(255) DEFAULT NULL COMMENT '昵称',
@@ -17,4 +23,4 @@ CREATE TABLE `user` (
   UNIQUE KEY `phone` (`phone`),
   KEY `mail` (`mail`),
   KEY `nickname` (`nickname`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
