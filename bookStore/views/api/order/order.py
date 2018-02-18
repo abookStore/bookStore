@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
-
+import json
 from flask import request
 from flask_login import current_user, login_required
+from bookStore import app
 from bookStore.mappings.order import Order
 from bookStore.mappings.order_detail import OrderDetail
 from bookStore.service.order.order import OrderService
@@ -10,14 +11,20 @@ from bookStore.views.api import exports
 from bookStore.views import make_api_response
 
 
-@exports('/order/query', methods=['GET'])
+@exports('/order/query', methods=['POST'])
 @login_required
 def query_orders():
     """
-    @api {GET} /order/query 查询用户对应的订单信息
+    @api {POST} /order/query 查询用户对应的订单信息
     @apiGroup Order
     @apiVersion 0.0.1
     @apiDescription 用于查询用户订单信息
+    @apiParamExample {json} 请求样例：
+                    {
+                        ["orderId": "123"],
+                        ["fromDate": "2018-02-01"],
+                        ["toDate": "2018-03-01"]
+                    }
     @apiSuccess (200) {String} msg 信息
     @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
     @apiSuccessExample {json} 返回样例:
@@ -41,22 +48,28 @@ def query_orders():
     @apiErrorExample {json} 返回样例:
                    {"status": "fail", "message": "用户不存在"}
     """
-    user_id = current_user.id
-    orders = OrderService.order_query(user_id)
+    from_date = request.json.get('fromDate')
+    to_date = request.json.get('toDate')
+    order_id = request.json.get('order_id')
 
-    if orders:
-        return make_api_response(payload=orders)
-    else:
+    user_id = current_user.id
+    if not user_id:
         return make_api_response(message="用户不存在", statusCode=400)
 
-@exports('/order/detail', methods=['GET'])
+    orders = OrderService.order_query_by_uid_date(user_id, order_id, from_date, to_date)
+
+    return make_api_response(payload=orders)
+
+
+@exports('/order/detail/<order_id>', methods=['GET'])
 @login_required
-def query_order_detail():
+def query_order_detail(order_id):
     """
-    @api {GET} /order/detail 查询订单对应的书目详情
+    @api {GET} /order/detail/<order_id> 查询订单对应的书目详情
     @apiGroup Order
     @apiVersion 0.0.1
     @apiDescription 用于查询用户订单信息
+    @apiParam {String} order_id 订单id
     @apiSuccess (200) {String} msg 信息
     @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
     @apiSuccessExample {json} 返回样例:
@@ -93,7 +106,9 @@ def query_order_detail():
                    {"status": "fail", "message": "用户不存在"}
     """
     # 获取参数
-    order_id = current_user.id
+    if not order_id:
+        return make_api_response(message='缺少order_id', statusCode=400)
+
     order_detail = OrderService.order_detail_query(order_id)
 
     if order_detail:

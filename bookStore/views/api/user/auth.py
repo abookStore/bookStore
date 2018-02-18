@@ -127,9 +127,12 @@ def register():
         return make_api_response(message='参数错误：缺少用户名或密码', statusCode=400)
 
     user = UserService.query_user_by_name(username=user_name)
-    logger.debug(user)
     if user is not None:
         return make_api_response(message='用户名已存在', statusCode=400)
+
+    user = UserService.query_user_by_phone(phone=phone)
+    if user is not None:
+        return make_api_response(message='手机号已存在', statusCode=400)
 
     userinfo = {
         'username': user_name,

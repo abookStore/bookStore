@@ -115,6 +115,6 @@ def remove_address_info(address_id):
     rvs = address_info_service.address_remove(address_id)
 
     if not rvs:
-        return make_api_response(statusCode=500)
+        return make_api_response(statusCode=400)
 
-    return make_api_response(500)
+    return make_api_response()
