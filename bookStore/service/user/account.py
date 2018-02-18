@@ -18,9 +18,10 @@ class AccountService():
 
             if account:
                 payload['user_id'] = account.user_id
-                payload['balance'] = account.balance
+                payload['balance'] = float(account.balance)
                 payload['bonus_point'] = account.bonus_point
-                payload['discount'] = account.discount
+                payload['discount'] = float(account.discount)
+                app.logger.info(payload['balance'])
 
             return payload
 
