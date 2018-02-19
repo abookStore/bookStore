@@ -27,6 +27,66 @@ class AccountService():
 
         return None
 
+    def account_log_query(self, user_id):
+        """
+        查询用户所有消费行为的最近记录
+        """
+        if not user_id:
+            return None
+
+        sql = """
+        select
+            *
+        from
+        (
+            select
+                user_id,
+                amount,
+                current_balance,
+                '余额消费' as t,
+                created_at
+            from account_consume a
+            where user_id = :user_id
+
+            union all
+
+            select
+                user_id,
+                amount,
+                current_balance,
+                '充值' as t,
+                created_at
+            from account_prepay b
+            where user_id = :user_id
+
+            union all
+
+            select
+                user_id,
+                amount,
+                current_balance,
+                '退款' as t,
+                created_at
+            from account_refund c
+            where user_id = :user_id
+        ) `all`
+        order by created_at desc
+        limit 10
+        """
+        rows = db.session.execute(sql, {"user_id": user_id}).fetchall()
+
+        rvs = {}
+        for row in rows:
+            rv = {}
+            rv['user_id'] = row.user_id
+            rv['amount'] = float(row.amount)
+            rv['current_balance'] = float(row.current_balance)
+            rv['type'] = row.t
+            created_at = row.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            rv['created_at'] = created_at
+            rvs[created_at] = rv
+        return rvs
+
     def account_consume_query(self, user_id):
         """
         查询用户消费相关的记录

@@ -98,7 +98,6 @@ class UserService():
                 payload['username'] = rv.username
                 payload['nickname'] = rv.nickname
                 payload['realname'] = rv.realname
-                payload['password'] = rv.password
                 payload['phone'] = rv.phone
                 payload['gender'] = rv.gender
                 payload['mail'] = rv.mail
