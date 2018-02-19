@@ -48,6 +48,7 @@ class OrderService():
                 *
             FROM `order`
             WHERE user_id = :user_id
+            AND order_status
             """
             if order_id:
                 sql += 'AND order_id = :order_id\n'

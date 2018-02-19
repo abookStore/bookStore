@@ -41,8 +41,10 @@ class AddressInfoService():
             info.address = address_info.get('address')
             info.post_code = address_info.get('post_code')
             info.phone = address_info.get('phone')
-            info.is_default = 0
+            info.is_default = address_info.get('is_default')
 
+            db.session.add(info)
+            db.session.flush()
             db.session.commit()
 
             return True
@@ -63,7 +65,6 @@ class AddressInfoService():
             info.address = address_info.get('address')
             info.post_code = address_info.get('post_code')
             info.phone = address_info.get('phone')
-            info.is_default = address_info.get('is_default')
 
             db.session.flush()
             db.session.commit()
@@ -88,4 +89,32 @@ class AddressInfoService():
 
         return False
 
+    def address_set_default(self, user_id, address_id):
+        """
+        指定默认收货地址
+        """
+        # 取消当前默认地址
+        sql_cancel = """
+        UPDATE address_info
+        SET is_default = 0
+        WHERE user_id = :user_id
+        AND is_default = 1
+        LIMIT 1;
+        """
 
+        # 设置新的默认地址
+        sql_set = """
+        UPDATE address_info
+        SET is_default = 1
+        WHERE id = :id
+        AND is_default = 0
+        LIMIT 1;
+        """
+        if address_id:
+            db.session.execute(sql_cancel, {'user_id': user_id})
+            db.session.execute(sql_set, {'id': address_id})
+            db.session.commit()
+
+            return True
+
+        return False

@@ -10,10 +10,11 @@ class BookService():
         根据 isbn 来搜索书目
         """
         if isbn:
-            row = db.session.query(Book).filter_by(isbn=isbn, is_active=1).first()
+            rows = db.session.query(Book).filter_by(isbn=isbn, is_active=1).all()
 
-            book_info = {}
-            if row:
+            books = {}
+            for row in rows:
+                book_info = {}
                 book_info['id'] = row.id
                 book_info['name'] = row.name
                 book_info['author'] = row.author
@@ -21,8 +22,9 @@ class BookService():
                 book_info['isbn'] = row.isbn
                 book_info['quantity'] = row.quantity
                 book_info['description'] = row.description
-                book_info['price'] = row.price
+                book_info['price'] = float(row.price)
 
+                books[row.id] = book_info
             return book_info
 
         return None
@@ -44,7 +46,7 @@ class BookService():
                 book_info['isbn'] = row.isbn
                 book_info['quantity'] = row.quantity
                 book_info['description'] = row.description
-                book_info['price'] = row.price
+                book_info['price'] = float(row.price)
 
                 book_info_all[row.id] = book_info
             return book_info_all

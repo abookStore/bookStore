@@ -8,33 +8,83 @@ from bookStore.views.api import exports
 from bookStore.views import make_api_response
 
 @exports('/book/query_by_isbn/<isbn>', methods=['GET'])
-@login_required
+# @login_required
 def query_book_by_isbn(isbn):
     """
-    根据 isbn 查询书目信息
+    @api {GET} /book/query_by_isbn/<isbn> 根据 isbn 查询书目信息
+    @apiGroup book
+    @apiVersion 0.0.1
+    @apiDescription 根据 isbn 查询书目信息
+    @apiParam {int} isbn
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                        {
+                        "status": "ok",
+                        "payload": {
+                            "1": {
+                            "name": "论语", 
+                            "press": "北京教育出版社", 
+                            "id": 1, 
+                            "description": null, 
+                            "quantity": 100, 
+                            "price": 0.0, 
+                            "author": "周杰伦", 
+                            "isbn": 9203204223
+                            }
+                        }, 
+                        "message": "ok"
+                        }
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "缺少isbn"}
     """
     if isbn:
         book_service = BookService()
         rv = book_service.book_query_by_isbn(isbn)
-        if rv:
-            return make_api_response(payload=rv, message='ok', statusCode=200)
-        return make_api_response(message='没有对应书目', statusCode=500)
+
+        return make_api_response(payload=rv, message='ok', statusCode=200)
     
     return make_api_response(message='缺少isbn')
 
 
 @exports('/book/query_by_name/<name>', methods=['GET'])
-@login_required
+# @login_required
 def query_book_by_name(name):
     """
-    根据 name 查询书目信息
+    @api {GET} /book/query_by_isbn/<name> 根据 书名 查询书目信息
+    @apiGroup book
+    @apiVersion 0.0.1
+    @apiDescription 根据 书名 查询书目信息
+    @apiParam {string} name 书名
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                        {
+                        "status": "ok",
+                        "payload": {
+                            "1": {
+                            "name": "论语", 
+                            "press": "北京教育出版社", 
+                            "id": 1, 
+                            "description": null, 
+                            "quantity": 100, 
+                            "price": 0.0, 
+                            "author": "周杰伦", 
+                            "isbn": 9203204223
+                            }
+                        }, 
+                        "message": "ok"
+                        }
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "缺少isbn"}
     """
     if name:
         book_service = BookService()
         rv = book_service.book_query_by_name(name)
-        if rv:
-            return make_api_response(payload=rv, message='ok', statusCode=200)
-        return make_api_response(message='没有对应书目', statusCode=500)
+
+        return make_api_response(payload=rv, message='ok', statusCode=200)
 
     return make_api_response(message='缺少isbn')
 
@@ -51,7 +101,7 @@ def book_remove(book_id):
         if rs:
             return make_api_response()
         else:
-            return make_api_response('书目id不存在')
+            return make_api_response('操作失败')
     return make_api_response(message='缺少书目id')
 
 @exports('/book/update', methods=['POST'])

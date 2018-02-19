@@ -21,7 +21,6 @@ class AccountService():
                 payload['balance'] = float(account.balance)
                 payload['bonus_point'] = account.bonus_point
                 payload['discount'] = float(account.discount)
-                app.logger.info(payload['balance'])
 
             return payload
 

@@ -24,14 +24,10 @@ def query_user_info():
                    {
                         "status": "ok",
                         "payload":{
-                            "realname": "132",
-                            "username": "bs",
-                            "phone": "pwd",
-                            "mail": "xxx@xxx.com",
-                            "nickname": "guest",
-                            "gender": "23",
-                            "password": "pwd",
-                            "qq": "12312"
+                            "user_id": "132",
+                            "balance": "1283.23",
+                            "bonus_point": "3000",
+                            "discount": "0.75"
                         }
                     }
     @apiError (400) {String} msg 信息

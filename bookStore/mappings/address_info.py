@@ -16,4 +16,4 @@ class AddressInfo(db.Model):
     address = Column(String)
     post_code = Column(String)
     phone = Column(Integer)
-    is_active = Column(Integer)
+    is_default = Column(Integer)
