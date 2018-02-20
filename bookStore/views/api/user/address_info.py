@@ -4,7 +4,7 @@ import logging
 from flask import request
 from flask_login import current_user, login_required
 
-from bookStore import app
+from bookStore import app, db
 from bookStore.service.user.address import AddressInfoService
 from bookStore.views.api import exports
 from bookStore.views import make_api_response
@@ -160,13 +160,14 @@ def remove_address_info(address_id):
                    {"status": "fail", "message": "用户不存在"}
     """
     user_id = current_user.id
-
     address_info_service = AddressInfoService()
-    rvs = address_info_service.address_remove(address_id)
+    # 删除指定的收货地址记录
+    rvs = address_info_service.address_remove(user_id, address_id)
 
     if not rvs:
         return make_api_response(statusCode=400)
 
+    # 检查是否还有默认收货地址记录
     return make_api_response()
 
 

@@ -72,7 +72,7 @@ class AddressInfoService():
             return True
         return False
 
-    def address_remove(self, address_id):
+    def address_remove(self, user_id, address_id):
         """
         删除指定收货地址
         """
@@ -83,9 +83,16 @@ class AddressInfoService():
         """
         if address_id:
             db.session.execute(sql, {'id': address_id})
-            db.session.commit()
 
-            return True
+            # 如果删除的是默认地址，则分配新的默认地址
+            default = self.get_default_address_query(user_id)
+
+            if not default:
+                old = self.get_oldest_address(user_id)
+                if old:
+                    self.address_set_default(user_id, old.id)
+
+                    return True
 
         return False
 
@@ -118,3 +125,26 @@ class AddressInfoService():
             return True
 
         return False
+
+    def get_default_address_query(self, user_id):
+        """
+        查询是否存在默认收货地址
+        """
+        row = db.session.query(AddressInfo).filter_by(
+            user_id=user_id, is_default=1).first()
+
+        if row:
+            return True
+
+        return False
+    
+    def get_oldest_address(self, user_id):
+        """
+        查询最早的默认收货地址记录
+        """
+        row = db.session.query(AddressInfo).filter_by(
+            user_id=user_id).order_by(AddressInfo.id.asc()).first()
+
+        return row
+
+

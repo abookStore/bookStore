@@ -267,3 +267,11 @@ def query_order_detail(order_id):
         return make_api_response(payload=order_detail)
     else:
         return make_api_response(message="订单不存在", statusCode=400)
+
+@exports("/order/create", methods=["GET"])
+@login_required
+def order_create():
+    """
+    创建订单
+    """
+    pass
