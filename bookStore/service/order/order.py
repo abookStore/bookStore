@@ -37,7 +37,7 @@ class OrderService():
         raise NotImplementedError('不支持的查询方式')
 
     @staticmethod
-    def order_query_by_uid_date(uid, order_id, from_date, to_date):
+    def order_query_by_uid_date(uid, order_id, status, from_date, to_date):
         """
         根据用户名查询 全部order
         """
@@ -48,7 +48,7 @@ class OrderService():
                 *
             FROM `order`
             WHERE user_id = :user_id
-            AND order_status
+            AND order_status = :status
             """
             if order_id:
                 sql += 'AND order_id = :order_id\n'
@@ -60,10 +60,58 @@ class OrderService():
             sql += 'ORDER BY id DESC'
             rows = db.session.execute(sql, {
                 "user_id": uid,
+                "status": status,
                 "order_id": order_id,
                 "from_date": from_date,
                 "to_date": to_date
                 }).fetchall()
+            for row in rows:
+                order = {
+                    'order_id': row.order_id,
+                    'user_id': row.user_id,
+                    'quantity': row.quantity,
+                    'origin_cost': float(row.origin_cost),
+                    'actual_cost': float(row.actual_cost),
+                    'order_status': row.order_status,
+                    'delivery_status': row.delivery_status,
+                    'pay_status': row.pay_status
+                }
+                payload[row.order_id] = order
+            return payload
+
+        raise NotImplementedError('不支持的查询方式')
+
+    @staticmethod
+    def order_ready_query_by_uid_date(uid, order_id, status, from_date, to_date):
+        """
+        根据用户名查询 待发货的order
+        """
+        payload = {}
+        if uid:
+            sql = """
+            SELECT
+                *
+            FROM `order`
+            WHERE user_id = :user_id
+            AND order_status = :status
+            AND delivery_status = 0
+            AND pay_status = 1
+            """
+            if order_id:
+                sql += 'AND order_id = :order_id\n'
+            if from_date:
+                sql += 'AND created_at >= :from_date\n'
+            if to_date:
+                sql += 'AND created_at <= :to_date\n'
+
+            sql += 'ORDER BY id DESC'
+            rows = db.session.execute(sql, {
+                "user_id": uid,
+                "status": status,
+                "order_id": order_id,
+                "from_date": from_date,
+                "to_date": to_date
+            }).fetchall()
             for row in rows:
                 order = {
                     'order_id': row.order_id,

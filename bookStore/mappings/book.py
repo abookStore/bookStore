@@ -19,4 +19,5 @@ class Book(db.Model):
     quantity = Column(Integer)
     description = Column(String)
     price = Column(DECIMAL)
+    supplier = Column(String)
     is_active = Column(Integer)

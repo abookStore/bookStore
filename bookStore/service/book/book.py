@@ -23,6 +23,7 @@ class BookService():
                 book_info['quantity'] = row.quantity
                 book_info['description'] = row.description
                 book_info['price'] = float(row.price)
+                book_info['supplier'] = row.supplier
 
                 books[row.id] = book_info
             return book_info
@@ -47,9 +48,32 @@ class BookService():
                 book_info['quantity'] = row.quantity
                 book_info['description'] = row.description
                 book_info['price'] = float(row.price)
+                book_info['supplier'] = row.supplier
 
                 book_info_all[row.id] = book_info
             return book_info_all
+
+        return None
+
+    def book_query_by_id(self, book_id):
+        """
+        根据书目id来搜索书目
+        """
+        if book_id:
+            row = db.session.query(Book).filter_by(id=book_id).first()
+
+            book_info = {}
+            book_info['id'] = row.id
+            book_info['name'] = row.name
+            book_info['author'] = row.author
+            book_info['press'] = row.press
+            book_info['isbn'] = row.isbn
+            book_info['quantity'] = row.quantity
+            book_info['description'] = row.description
+            book_info['price'] = float(row.price)
+            book_info['supplier'] = row.supplier
+
+            return book_info
 
         return None
 

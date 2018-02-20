@@ -10,6 +10,7 @@ mysql.data:
 	mysql -f -h127.0.0.1 -P3306 -uroot < sql/account_consume.sql
 	mysql -f -h127.0.0.1 -P3306 -uroot < sql/account_prepay.sql
 	mysql -f -h127.0.0.1 -P3306 -uroot < sql/account.sql
+	mysql -f -h127.0.0.1 -P3306 -uroot < sql/shopping_cart.sql
 
 	mysql -f -h127.0.0.1 -P3306 -uroot < sql/mock_data.sql
 

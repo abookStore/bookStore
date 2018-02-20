@@ -30,7 +30,8 @@ def query_book_by_isbn(isbn):
                             "quantity": 100, 
                             "price": 0.0, 
                             "author": "周杰伦", 
-                            "isbn": 9203204223
+                            "isbn": 9203204223,
+                            "supplier": "天人1"
                             }
                         }, 
                         "message": "ok"
@@ -71,7 +72,8 @@ def query_book_by_name(name):
                             "quantity": 100, 
                             "price": 0.0, 
                             "author": "周杰伦", 
-                            "isbn": 9203204223
+                            "isbn": 9203204223,
+                            "supplier": "天人1"
                             }
                         }, 
                         "message": "ok"
