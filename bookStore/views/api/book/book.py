@@ -11,7 +11,7 @@ from bookStore.views import make_api_response
 # @login_required
 def query_book_by_isbn(isbn):
     """
-    @api {GET} /book/query_by_isbn/<isbn> 根据 isbn 查询书目信息
+    @api {GET} /book/query_book_by_isbn/<isbn> 根据 isbn 查询书目信息
     @apiGroup book
     @apiVersion 0.0.1
     @apiDescription 根据 isbn 查询书目信息
@@ -53,7 +53,7 @@ def query_book_by_isbn(isbn):
 # @login_required
 def query_book_by_name(name):
     """
-    @api {GET} /book/query_by_isbn/<name> 根据 书名 查询书目信息
+    @api {GET} /book/query_book_by_name/<name> 根据 书名 查询书目信息
     @apiGroup book
     @apiVersion 0.0.1
     @apiDescription 根据 书名 查询书目信息
