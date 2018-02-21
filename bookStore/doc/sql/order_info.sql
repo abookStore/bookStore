@@ -6,7 +6,7 @@ USE bookstore;
 
 CREATE TABLE IF NOT EXISTS `order_info` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL COMMENT '订单id',
+  `order_id` bigint(20) NOT NULL COMMENT '订单id',
   `consignee` varchar(255) NOT NULL DEFAULT '' COMMENT '收货人姓名',
   `address` varchar(255) DEFAULT NULL COMMENT '收货地址',
   `phone` bigint(20) DEFAULT NULL COMMENT '收货人联系电话',
@@ -15,4 +15,4 @@ CREATE TABLE IF NOT EXISTS `order_info` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_order_id` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;

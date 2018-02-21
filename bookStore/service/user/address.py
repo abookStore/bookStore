@@ -30,6 +30,15 @@ class AddressInfoService():
 
         return None
 
+    def address_query_by_id(self, user_id, address_id):
+        """
+        查询最早的默认收货地址记录
+        """
+        row = db.session.query(AddressInfo).filter_by(
+            user_id=user_id, id=address_id).first()
+
+        return row
+
     def address_add(self, address_info):
         """
         新增收货地址

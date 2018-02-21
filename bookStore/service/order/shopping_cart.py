@@ -124,3 +124,20 @@ class CartService():
             return True
 
         return False
+
+    def cart_quantity(self, user_id):
+        """
+        计算购物车中综合
+        """
+        sql = """
+        SELECT
+            SUM(order_quantity)
+        FROM shopping_cart
+        WHERE user_id = :user_id
+        """
+        if user_id:
+            total_quantity = db.session.execute(sql, {'user_id': user_id}).scalar()
+
+            return total_quantity
+
+        return None

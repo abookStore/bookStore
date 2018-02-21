@@ -21,4 +21,4 @@ CREATE TABLE IF NOT EXISTS `book` (
   UNIQUE KEY `isbn` (`isbn`,`name`,`supplier`,`press`),
   KEY `ux_name` (`name`),
   KEY `idx_isbn` (`isbn`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;

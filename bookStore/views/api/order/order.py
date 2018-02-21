@@ -268,10 +268,30 @@ def query_order_detail(order_id):
     else:
         return make_api_response(message="订单不存在", statusCode=400)
 
-@exports("/order/create", methods=["GET"])
-@login_required
+@exports("/order/create", methods=["POST"])
+# @login_required
 def order_create():
     """
     创建订单
     """
-    pass
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    origin_cost = request.json['origin_cost']
+    actual_cost = request.json['actual_cost']
+    total_quantity = request.json['total_quantity']
+    address_id = request.json['address_id']
+
+    total_info = {
+        'origin_cost': origin_cost,
+        'actual_cost': actual_cost,
+        'total_quantity': total_quantity
+    }
+
+    result, message = OrderService.order_create(user_id, total_info, address_id)
+
+    if not result:
+        return make_api_response(message=message, statusCode=400)
+
+    return make_api_response()

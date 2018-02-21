@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-
+from datetime import datetime
 from bookStore import db, app
 from bookStore.mappings.account import Account
 from bookStore.mappings.account_consume import AccountConsume
@@ -98,6 +98,29 @@ class AccountService():
 
         return rows
 
+    def account_consume_add(self, user_id, consume, balance):
+        """
+        增加用户消费的记录
+        """
+        if not user_id or not consume:
+            return None
+
+        now = datetime.now()
+        day = int(now.strftime('%Y%m%d'))
+        month = int(now.strftime('%Y%m'))
+
+        account_consume = AccountConsume()
+        account_consume.user_id = user_id
+        account_consume.amount = consume
+        account_consume.current_balance = balance
+        account_consume.day = day
+        account_consume.month = month
+
+        db.session.add(account_consume)
+        db.session.flush()
+
+        return True
+
     def account_prepay_query(self, user_id):
         """
         查询用户充值相关的记录
@@ -121,3 +144,19 @@ class AccountService():
             user_id=user_id).order_by(AccountRefund.id.desc()) .all()
 
         return rows
+
+    def account_change(self, user_id, change):
+        """
+        对余额进行扣款
+        """
+        if not change:
+            return False
+
+        sql = """
+        UPDATE account SET
+        balance = balance + :change
+        WHERE user_id = :user_id
+        LIMIT 1
+        """
+
+        db.session.execute(sql, {'change': change, 'user_id': user_id})

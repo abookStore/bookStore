@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from bookStore import db
 from bookStore.mappings.order import Order
 from bookStore.mappings.order_detail import OrderDetail
-
+from bookStore.mappings.order_info import OrderInfo
+from bookStore.service.order.shopping_cart import CartService
+from bookStore.service.user.address import AddressInfoService
+from bookStore.service.user.account import AccountService
 class OrderService():
 
     @staticmethod
@@ -159,3 +163,101 @@ class OrderService():
             return payload
 
         raise NotImplementedError('不支持的查询方式')
+
+    @staticmethod
+    def order_create(user_id, total_info, address_id):
+        """
+        新建订单
+        """
+        account_info = AccountService.account_query(user_id)
+
+        if account_info['balance'] < total_info['actual_cost']:
+            return False, "余额不足"
+
+        cart = CartService()
+        # 查询购物车
+        books = cart.cart_info_query(user_id)
+        if not books:
+            return False, "购物车为空"
+
+        # order 表
+        order = Order()
+        order_id = OrderService.generate_order_id()
+        order.order_id = order_id
+        order.user_id = user_id
+        order.quantity = total_info['total_quantity']
+        order.origin_cost = total_info['origin_cost']
+        order.actual_cost = total_info['actual_cost']
+        order.order_status = 1
+        order.delivery_status = 0
+        order.pay_status = 0
+
+        db.session.add(order)
+        db.session.flush()
+
+        # order_detail 表
+        for book in books.values():
+            order_detail = OrderDetail()
+            order_detail.order_id = order_id
+            order_detail.book_id = book['book_id']
+            order_detail.book_name = book['book_name']
+            order_detail.isbn = book['isbn']
+            order_detail.origin_price = book['origin_price']
+            order_detail.actual_price = book['actual_price']
+            order_detail.warehouse = book['supplier']
+            order_detail.discount = book['discount']
+            order_detail.order_quantity = book['order_quantity']
+            order_detail.deliveried_quantity = 0
+
+            db.session.add(order_detail)
+            db.session.flush()
+
+        # order_info 表
+        if not address_id:
+            return False, "缺少收货地址id"
+
+        address_service = AddressInfoService()
+        address = address_service.address_query_by_id(user_id, address_id)
+        order_info = OrderInfo()
+        order_info.order_id = order_id
+        order_info.consignee = address.name
+        order_info.address = address.address
+        order_info.post_code = address.post_code
+        order_info.phone = address.phone
+        db.session.add(order_info)
+        db.session.flush()
+
+        # account 表
+        account_service = AccountService()
+        change = - total_info['actual_cost']
+        account_service.account_change(user_id, change)
+
+        # account_consume 表
+        balance = account_info['balance'] - total_info['actual_cost']
+        account_service.account_consume_add(
+            user_id,
+            total_info['actual_cost'],
+            balance
+        )
+
+        # 清空购物车
+        cart.cart_remove_all(user_id)
+
+        db.session.commit()
+
+        return True, '操作成功'
+
+    @staticmethod
+    def generate_order_id():
+        """
+        生成订单id
+        """
+        now = datetime.now().strftime("%Y%m%d%H%M%S")
+
+        rand = ''
+        import random
+        for i in range(5):
+            r = random.randint(0, 9)
+            rand += str(r)
+
+        return int(now + rand)
