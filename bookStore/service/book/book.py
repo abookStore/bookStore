@@ -11,7 +11,7 @@ class BookService():
         """
         if isbn:
             rows = db.session.query(Book).filter_by(isbn=isbn, is_active=1).all()
-
+            book_info = {}
             books = {}
             for row in rows:
                 book_info = {}
