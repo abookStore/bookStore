@@ -75,31 +75,21 @@ def add_cart():
     @apiVersion 0.0.1
     @apiDescription 添加书目到购物车
     @apiParam {int} book_id 书目的id
-    @apiParam {double} actual_price 实际单价
     @apiParam {int} quantity 数量
-    @apiParam {double} total_price 实际总价
-    @apiParam {double} discount 折扣
     @apiParamExample {json} 请求样例：
                         {
                             "book_id": 1,
-                            "actual_price": 12.23,
-                            "quantity": 12,
-                            "total_price": 10.33,
-                            "discount": 0.75
+                            "quantity": 12
                         }
     @apiSuccess (200) {String} msg 信息
     """
     user_id = current_user.id
     book_id = request.json['book_id']
-    actual_price = request.json['actual_price']
     quantity = request.json['quantity']
-    total_price = request.json['total_price']
-    discount = request.json['discount']
 
     cart_service = CartService()
 
-    cart_service.cart_add(user_id, book_id,
-            actual_price, quantity, total_price, discount)
+    cart_service.cart_add(user_id, book_id, quantity)
 
     return make_api_response()
 
@@ -114,14 +104,10 @@ def update_address_info():
     @apiDescription 更新购物车
     @apiParam {int} cart_id 购物车item的编号
     @apiParam {int} quantity 数量
-    @apiParam {double} total_price 实际总价
-    @apiParam {double} discount 折扣
     @apiParamExample {json} 请求样例：
                         {
                             "cart_id": 1,
-                            "quantity": 12,
-                            "total_price": 10.33,
-                            "discount": 0.75
+                            "quantity": 12
                         }
     @apiSuccess (200) {String} msg 信息
     """
@@ -129,12 +115,10 @@ def update_address_info():
     user_id = current_user.id
     cart_id = request.json['cart_id']
     quantity = request.json['quantity']
-    total_price = request.json['total_price']
-    discount = request.json['discount']
 
     cart_service = CartService()
 
-    cart_service.cart_quantity_update(total_price, quantity, cart_id, user_id)
+    cart_service.cart_quantity_update(quantity, cart_id, user_id)
 
     return make_api_response()
 

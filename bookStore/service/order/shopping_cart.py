@@ -3,6 +3,7 @@
 from bookStore import db, app
 from bookStore.mappings.shopping_cart import ShoppingCart
 from bookStore.service.book.book import BookService
+from bookStore.service.user.account import AccountService
 
 
 class CartService():
@@ -36,15 +37,19 @@ class CartService():
 
         return None
 
-    def cart_add(self, user_id, book_id, actual_price, quantity, total_price, discount):
+    def cart_add(self, user_id, book_id, quantity):
         """
         购物车新增书目
         """
-        if not user_id or not book_id or not quantity or not discount:
+        if not user_id or not book_id or not quantity:
             return False
 
         book_service = BookService()
         book = book_service.book_query_by_id(book_id)
+        price = book['price']
+        account_service = AccountService()
+        account = account_service.account_query(user_id)
+        discount = account['discount']
 
         cart = ShoppingCart()
         cart.user_id = user_id
@@ -52,11 +57,11 @@ class CartService():
         cart.book_name = book['name']
         cart.isbn = book['isbn']
         cart.supplier = book['supplier']
-        cart.origin_price = book['price']
-        cart.total_price = total_price
+        cart.origin_price = price
         cart.order_quantity = quantity
-        cart.actual_price = actual_price
         cart.discount = discount
+        cart.actual_price = price * discount
+        cart.total_price = price * quantity * discount
 
         db.session.add(cart)
         db.session.flush()
@@ -64,7 +69,7 @@ class CartService():
 
         return False
 
-    def cart_quantity_update(self, total_price, quantity, cart_id, user_id):
+    def cart_quantity_update(self, quantity, cart_id, user_id):
         """
         变更购物车内书目的数量
         """
@@ -73,7 +78,7 @@ class CartService():
             UPDATE shopping_cart
             SET
                 order_quantity = :quantity,
-                total_price = :total_price
+                total_price = actual_price * :quantity
             WHERE id = :cart_id
             AND user_id = :user_id
             LIMIT 1
@@ -81,7 +86,6 @@ class CartService():
 
             params = {
                 "quantity": quantity,
-                "total_price": total_price,
                 "cart_id": cart_id,
                 "user_id": user_id
             }

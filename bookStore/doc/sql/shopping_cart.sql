@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `shopping_cart` (
   `origin_price` decimal(5,2) DEFAULT NULL COMMENT '定价',
   `actual_price` decimal(5,2) DEFAULT NULL COMMENT '实价',
   `total_price` decimal(10,2) DEFAULT NULL COMMENT '总价',
-  `discount` decimal(5,0) DEFAULT NULL COMMENT '折扣',
+  `discount` decimal(5,2) DEFAULT NULL COMMENT '折扣',
   `order_quantity` int(5) DEFAULT NULL COMMENT '购买数',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
