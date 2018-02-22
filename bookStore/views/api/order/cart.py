@@ -11,7 +11,7 @@ from bookStore.views import make_api_response
 
 
 @exports('/cart/query', methods=['GET'])
-@login_required
+# @login_required
 def query_cart():
     """
     @api {GET} /cart/query 查询用户购物车信息
@@ -34,7 +34,8 @@ def query_cart():
                                 "isbn": 9203204223, 
                                 "book_name": "论语", 
                                 "actual_price": 12.23, 
-                                "order_quantity": 15
+                                "order_quantity": 15,
+                                "quantity": 20
                             }, 
                             "5": {
                                 "discount": 1.0, 
@@ -47,7 +48,8 @@ def query_cart():
                                 "isbn": 23123213, 
                                 "book_name": "haha", 
                                 "actual_price": 32.0, 
-                                "order_quantity": 23
+                                "order_quantity": 23,
+                                "quantity": 25
                                 }
                         }, 
                         "status": "ok"
@@ -56,7 +58,8 @@ def query_cart():
     @apiErrorExample {json} 返回样例:
                    {"status": "fail", "message": "用户不存在"}
     """
-    user_id = current_user.id
+    # user_id = current_user.id
+    user_id = 4
     if user_id:
         cart_service = CartService()
         cart = cart_service.cart_info_query(user_id)

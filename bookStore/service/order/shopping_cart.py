@@ -31,6 +31,10 @@ class CartService():
                     book['discount'] = float(row.discount)
                     book['order_quantity'] = row.order_quantity
 
+                    # 计算库存数
+                    book_service = BookService()
+                    book_info = book_service.book_query_by_id(row.book_id)
+                    book['quantity'] = book_info['quantity']
                     cart[row.id] = book
 
             return cart
