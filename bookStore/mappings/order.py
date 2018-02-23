@@ -12,6 +12,7 @@ class Order(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     order_id = Column(Integer)
+    user_id = Column(Integer)
     quantity = Column(Integer)
     origin_cost = Column(DECIMAL)
     actual_cost = Column(DECIMAL)

@@ -3,7 +3,7 @@ import logging
 import json
 from flask import request
 from flask_login import current_user, login_required
-from bookStore import app
+from bookStore import app, db
 from bookStore.mappings.order import Order
 from bookStore.mappings.order_detail import OrderDetail
 from bookStore.service.order.order import OrderService
@@ -275,6 +275,7 @@ def order_create():
     创建订单
     """
     user_id = current_user.id
+    user_id = 4
     if not user_id:
         return make_api_response(message="用户不存在", statusCode=400)
 
@@ -294,4 +295,5 @@ def order_create():
     if not result:
         return make_api_response(message=message, statusCode=400)
 
+    db.session.commit()
     return make_api_response()

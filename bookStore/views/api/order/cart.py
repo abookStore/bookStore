@@ -171,6 +171,8 @@ def remove_cart():
     rv = cart_service.cart_remove_all(user_id)
 
     if not rv:
+        db.session.rollback()
         return make_api_response(statusCode=400)
 
+    db.session.commit()
     return make_api_response()

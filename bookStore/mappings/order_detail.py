@@ -12,6 +12,7 @@ class OrderDetail(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     order_id = Column(Integer)
+    book_id = Column(Integer)
     book_name = Column(String)
     isbn = Column(Integer)
     origin_price = Column(DECIMAL)

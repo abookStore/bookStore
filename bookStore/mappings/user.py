@@ -23,5 +23,3 @@ class User(db.Model, UserMixin):
     mail = Column(String)
     phone = Column(String)
     qq = Column(String)
-    created_at = Column(TIMESTAMP)
-    updated_at = Column(TIMESTAMP)

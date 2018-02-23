@@ -48,6 +48,11 @@ class CartService():
         if not user_id or not book_id or not quantity:
             return False
 
+        # 购物车中书目不重复
+        rv = self.cart_query_by_id(user_id, book_id)
+        if rv:
+            return False
+
         book_service = BookService()
         book = book_service.book_query_by_id(book_id)
         price = book['price']
@@ -127,7 +132,6 @@ class CartService():
         """
         if user_id:
             db.session.execute(sql, {'user_id': user_id})
-            db.session.commit()
 
             return True
 
@@ -149,3 +153,12 @@ class CartService():
             return total_quantity
 
         return None
+
+    def cart_query_by_id(self, user_id, book_id):
+        """
+        根据用户id 和 书目id 查找购物车记录
+        """
+        row = db.session.query(ShoppingCart).filter_by(
+            user_id=user_id, book_id=book_id).first()
+
+        return row

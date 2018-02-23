@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   `user_id` int(11) NOT NULL COMMENT '用户id',
   `balance` decimal(11,2) DEFAULT NULL COMMENT '余额',
   `bonus_point` int(11) DEFAULT NULL COMMENT '积分',
-  `discount` decimal(5,0) DEFAULT NULL COMMENT '折扣',
+  `discount` decimal(5,2) DEFAULT NULL COMMENT '折扣',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

@@ -141,3 +141,30 @@ class BookService():
             return True
 
         return False
+
+    def book_quantity_update(self, book_id, quantity_inc):
+        """
+        书目库存的变化
+        """
+        if quantity_inc == 0:
+            return True
+
+        if not book_id:
+            return False
+
+        sql = """
+        UPDATE book SET
+        quantity = quantity + :quantity_inc
+        WHERE id = :book_id
+        AND quantity + :quantity_inc >= 0
+        """
+        params = {
+            'quantity_inc': quantity_inc,
+            'book_id': book_id
+        }
+
+        r = db.session.execute(sql, params).rowcount
+        if r:
+            return True
+
+        return False

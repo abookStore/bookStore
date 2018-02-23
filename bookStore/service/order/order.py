@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from bookStore import db
+from bookStore import app, db
 from bookStore.mappings.order import Order
 from bookStore.mappings.order_detail import OrderDetail
 from bookStore.mappings.order_info import OrderInfo
 from bookStore.service.order.shopping_cart import CartService
 from bookStore.service.user.address import AddressInfoService
 from bookStore.service.user.account import AccountService
+from bookStore.service.book.book import BookService
 class OrderService():
 
     @staticmethod
@@ -195,8 +196,9 @@ class OrderService():
         db.session.add(order)
         db.session.flush()
 
-        # order_detail 表
+
         for book in books.values():
+            # order_detail 表
             order_detail = OrderDetail()
             order_detail.order_id = order_id
             order_detail.book_id = book['book_id']
@@ -211,6 +213,14 @@ class OrderService():
 
             db.session.add(order_detail)
             db.session.flush()
+
+            # book 表修改库存书
+            book_service = BookService()
+            rowcount = book_service.book_quantity_update(book['book_id'], - book['order_quantity'])
+
+            if rowcount is False:
+                db.session.rollback()
+                return False, "book_id : %s 库存不足，下单失败" % book['book_id']
 
         # order_info 表
         if not address_id:
@@ -242,8 +252,6 @@ class OrderService():
 
         # 清空购物车
         cart.cart_remove_all(user_id)
-
-        db.session.commit()
 
         return True, '操作成功'
 
