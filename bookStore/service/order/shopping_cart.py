@@ -137,20 +137,22 @@ class CartService():
 
         return False
 
-    def cart_quantity(self, user_id):
+    def cart_total(self, user_id):
         """
-        计算购物车中综合
+        计算购物车中总和值
         """
         sql = """
         SELECT
-            SUM(order_quantity)
+            SUM(origin_price) origin_cost,
+            SUM(total_price) actual_cost,
+            SUM(order_quantity) total_quantity
         FROM shopping_cart
         WHERE user_id = :user_id
         """
         if user_id:
-            total_quantity = db.session.execute(sql, {'user_id': user_id}).scalar()
+            total = db.session.execute(sql, {'user_id': user_id}).fetchone()
 
-            return total_quantity
+            return total
 
         return None
 

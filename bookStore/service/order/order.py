@@ -166,16 +166,17 @@ class OrderService():
         raise NotImplementedError('不支持的查询方式')
 
     @staticmethod
-    def order_create(user_id, total_info, address_id):
+    def order_create(user_id, address_id):
         """
         新建订单
         """
         account_info = AccountService.account_query(user_id)
-
+        cart = CartService()
+        total_info = cart.cart_total(user_id)
         if account_info['balance'] < total_info['actual_cost']:
             return False, "余额不足"
 
-        cart = CartService()
+
         # 查询购物车
         books = cart.cart_info_query(user_id)
         if not books:
