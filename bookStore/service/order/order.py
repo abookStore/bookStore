@@ -173,7 +173,7 @@ class OrderService():
         account_info = AccountService.account_query(user_id)
         cart = CartService()
         total_info = cart.cart_total(user_id)
-        if account_info['balance'] < total_info['actual_cost']:
+        if account_info['balance'] < float(total_info['actual_cost']):
             return False, "余额不足"
 
 
@@ -244,7 +244,7 @@ class OrderService():
         account_service.account_change(user_id, change)
 
         # account_consume 表
-        balance = account_info['balance'] - total_info['actual_cost']
+        balance = account_info['balance'] - float(total_info['actual_cost'])
         account_service.account_consume_add(
             user_id,
             total_info['actual_cost'],
