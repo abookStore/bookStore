@@ -92,7 +92,7 @@ class AddressInfoService():
         """
         if address_id:
             db.session.execute(sql, {'id': address_id})
-
+            db.session.commit()
             # 如果删除的是默认地址，则分配新的默认地址
             default = self.get_default_address_query(user_id)
 
@@ -101,7 +101,7 @@ class AddressInfoService():
                 if old:
                     self.address_set_default(user_id, old.id)
 
-                    return True
+            return True
 
         return False
 

@@ -27,7 +27,7 @@ class OrderService():
             rows = db.session.execute(sql, {"user_id": uid}).fetchall()
             for row in rows:
                 order = {
-                    'order_id': row.order_id,
+                    'order_id': str(row.order_id),
                     'user_id': row.user_id,
                     'quantity': row.quantity,
                     'origin_cost': float(row.origin_cost),
@@ -72,7 +72,7 @@ class OrderService():
                 }).fetchall()
             for row in rows:
                 order = {
-                    'order_id': row.order_id,
+                    'order_id': str(row.order_id),
                     'user_id': row.user_id,
                     'quantity': row.quantity,
                     'origin_cost': float(row.origin_cost),
@@ -192,7 +192,7 @@ class OrderService():
         order.actual_cost = total_info['actual_cost']
         order.order_status = 1
         order.delivery_status = 0
-        order.pay_status = 0
+        order.pay_status = 1
 
         db.session.add(order)
         db.session.flush()
