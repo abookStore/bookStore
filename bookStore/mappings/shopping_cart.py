@@ -16,6 +16,7 @@ class ShoppingCart(db.Model):
     book_id = Column(Integer)
     book_name = Column(String)
     isbn = Column(Integer)
+    supplier_id = Column(Integer)
     supplier = Column(String)
     origin_price = Column(DECIMAL)
     actual_price = Column(DECIMAL)

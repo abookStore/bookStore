@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS `order_info` (
   `address` varchar(255) DEFAULT NULL COMMENT '收货地址',
   `phone` bigint(20) DEFAULT NULL COMMENT '收货人联系电话',
   `post_code` int(11) DEFAULT NULL COMMENT '收货地址邮编',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_order_id` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;

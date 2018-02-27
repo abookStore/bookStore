@@ -20,4 +20,5 @@ class OrderDetail(db.Model):
     discount = Column(DECIMAL)
     order_quantity = Column(Integer)
     deliveried_quantity = Column(Integer)
+    supplier_id = Column(Integer)
     warehouse = Column(String)
