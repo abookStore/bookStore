@@ -145,6 +145,7 @@ def book_add():
     """
     更新书目信息
     """
+    user_id = current_user.id
     isbn = request.json['isbn']
     name = request.json['name']
     author = request.json['author']
@@ -164,9 +165,53 @@ def book_add():
         'is_active': 1
     }
     book_service = BookService()
-    rv = book_service.book_add(book_info)
+    rv = book_service.book_add(user_id, book_info)
 
     if rv:
         return make_api_response()
     else:
         return make_api_response(message='更新失败', statusCode=400)
+
+
+@exports('/book/supplied', methods=['POST'])
+@login_required
+def book_supplied():
+    """
+    @api {GET} /book/supplied 当前用户书库中可提供的全部书目
+    @apiGroup book
+    @apiVersion 0.0.1
+    @apiDescription 当前用户书库中可提供的全部书目
+    @apiParam {int} isbn
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                        {
+                        "status": "ok",
+                        "payload": {
+                            "1": {
+                            "name": "论语", 
+                            "press": "北京教育出版社", 
+                            "id": 1, 
+                            "description": null, 
+                            "quantity": 100, 
+                            "price": 0.0, 
+                            "author": "周杰伦", 
+                            "isbn": 9203204223,
+                            "supplier_id": 12,
+                            "supplier": "天人1"
+                            }
+                        }, 
+                        "message": "ok"
+                        }
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "缺少isbn"}
+    """
+    user_id = current_user.id
+    if user_id:
+        book_service = BookService()
+        rv = book_service.books_query_by_supplier(user_id)
+
+        return make_api_response(payload=rv, message='ok', statusCode=200)
+
+    return make_api_response(message='用户不存在', statusCode=400)

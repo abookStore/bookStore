@@ -24,6 +24,7 @@ class CartService():
                     book['book_id'] = row.book_id
                     book['book_name'] = row.book_name
                     book['isbn'] = row.isbn
+                    book['supplier_id'] = row.supplier_id
                     book['supplier'] = row.supplier
                     book['origin_price'] = float(row.origin_price)
                     book['actual_price'] = float(row.actual_price)
@@ -65,6 +66,7 @@ class CartService():
         cart.book_id = book_id
         cart.book_name = book['name']
         cart.isbn = book['isbn']
+        cart.supplier = book['supplier_id']
         cart.supplier = book['supplier']
         cart.origin_price = price
         cart.order_quantity = quantity

@@ -65,38 +65,6 @@ def query_orders():
 @login_required
 def query_closed_orders():
     """
-    @api {POST} /order/closed_query 查询用户对应的已关闭的订单信息
-    @apiGroup Order
-    @apiVersion 0.0.1
-    @apiDescription 查询用户对应的已关闭的订单信息
-    @apiParamExample {json} 请求样例：
-                    {
-                        ["orderId": "123"],
-                        ["fromDate": "2018-02-01"],
-                        ["toDate": "2018-03-01"]
-                    }
-    @apiSuccess (200) {String} msg 信息
-    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
-    @apiSuccessExample {json} 返回样例:
-                        {
-                            "payload": {
-                                "12": {
-                                "user_id": 123,
-                                "order_id": 12,
-                                "quantity": 1,
-                                "origin_cost": 22.0,
-                                "pay_status": 1,
-                                "order_status": 1,
-                                "actual_cost": 22.0,
-                                "delivery_status": 1
-                                }
-                            },
-                            "status": "ok"
-                        }
-
-    @apiError (400) {String} msg 信息
-    @apiErrorExample {json} 返回样例:
-                   {"status": "fail", "message": "用户不存在"}
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
@@ -116,38 +84,6 @@ def query_closed_orders():
 @login_required
 def query_return_orders():
     """
-    @api {POST} /order/return_query 查询用户对应的退单信息
-    @apiGroup Order
-    @apiVersion 0.0.1
-    @apiDescription 查询用户对应的退单信息
-    @apiParamExample {json} 请求样例：
-                    {
-                        ["orderId": "123"],
-                        ["fromDate": "2018-02-01"],
-                        ["toDate": "2018-03-01"]
-                    }
-    @apiSuccess (200) {String} msg 信息
-    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
-    @apiSuccessExample {json} 返回样例:
-                        {
-                            "payload": {
-                                "12": {
-                                "user_id": 123,
-                                "order_id": 12,
-                                "quantity": 1,
-                                "origin_cost": 22.0,
-                                "pay_status": 1,
-                                "order_status": 1,
-                                "actual_cost": 22.0,
-                                "delivery_status": 1
-                                }
-                            },
-                            "status": "ok"
-                        }
-
-    @apiError (400) {String} msg 信息
-    @apiErrorExample {json} 返回样例:
-                   {"status": "fail", "message": "用户不存在"}
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
@@ -167,38 +103,6 @@ def query_return_orders():
 @login_required
 def query_ready_orders():
     """
-    @api {POST} /order/return_query 查询用户待发货的订单信息
-    @apiGroup Order
-    @apiVersion 0.0.1
-    @apiDescription 查询用户待发货的订单信息
-    @apiParamExample {json} 请求样例：
-                    {
-                        ["orderId": "123"],
-                        ["fromDate": "2018-02-01"],
-                        ["toDate": "2018-03-01"]
-                    }
-    @apiSuccess (200) {String} msg 信息
-    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
-    @apiSuccessExample {json} 返回样例:
-                        {
-                            "payload": {
-                                "12": {
-                                "user_id": 123,
-                                "order_id": 12,
-                                "quantity": 1,
-                                "origin_cost": 22.0,
-                                "pay_status": 1,
-                                "order_status": 1,
-                                "actual_cost": 22.0,
-                                "delivery_status": 1
-                                }
-                            },
-                            "status": "ok"
-                        }
-
-    @apiError (400) {String} msg 信息
-    @apiErrorExample {json} 返回样例:
-                   {"status": "fail", "message": "用户不存在"}
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
@@ -233,6 +137,7 @@ def query_order_detail(order_id):
                                 "book_name": "论语",
                                 "origin_price": 1.0,
                                 "discount": 3.0,
+                                "supplier_id": 12,
                                 "warehouse": "北京2",
                                 "actual_price": 22.0,
                                 "order_id": 12,
@@ -244,6 +149,7 @@ def query_order_detail(order_id):
                                 "book_name": "诗经",
                                 "origin_price": 12.0,
                                 "discount": 2.0,
+                                "supplier_id": 12,
                                 "warehouse": "北京1",
                                 "actual_price": 123.0,
                                 "order_id": 12,
@@ -258,10 +164,12 @@ def query_order_detail(order_id):
                    {"status": "fail", "message": "用户不存在"}
     """
     # 获取参数
+    user_id = current_user.id
+
     if not order_id:
         return make_api_response(message='缺少order_id', statusCode=400)
 
-    order_detail = OrderService.order_detail_query(order_id)
+    order_detail = OrderService.order_detail_query(order_id, user_id)
 
     if order_detail:
         return make_api_response(payload=order_detail)
@@ -304,10 +212,12 @@ def query_order_detail_sell(order_id):
                    {"status": "fail", "message": "用户不存在"}
     """
     # 获取参数
+    user_id = current_user.id
+
     if not order_id:
         return make_api_response(message='缺少order_id', statusCode=400)
 
-    order_detail = OrderService.order_detail_query(order_id)
+    order_detail = OrderService.order_detail_query(order_id, user_id, sell=True)
 
     if order_detail:
         return make_api_response(payload=order_detail)
@@ -410,7 +320,18 @@ def query_selling_orders():
     @apiErrorExample {json} 返回样例:
                    {"status": "fail", "message": "用户不存在"}
     """
-    pass
+    from_date = request.json.get('fromDate')
+    to_date = request.json.get('toDate')
+    order_id = request.json.get('order_id')
+
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    orders = OrderService.order_query_by_uid_date(
+        user_id, order_id, 1, from_date, to_date, 4)
+
+    return make_api_response(payload=orders)
 
 @exports("order/query/sold", methods=['POST'])
 @login_required
@@ -449,7 +370,18 @@ def query_sold_orders():
     @apiErrorExample {json} 返回样例:
                    {"status": "fail", "message": "用户不存在"}
     """
-    pass
+    from_date = request.json.get('fromDate')
+    to_date = request.json.get('toDate')
+    order_id = request.json.get('order_id')
+
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    orders = OrderService.order_query_by_uid_date(
+        user_id, order_id, 1, from_date, to_date, 2)
+
+    return make_api_response(payload=orders)
 
 @exports("order/query/bought", methods=['POST'])
 @login_required
@@ -488,7 +420,18 @@ def query_bought_orders():
     @apiErrorExample {json} 返回样例:
                    {"status": "fail", "message": "用户不存在"}
     """
-    pass
+    from_date = request.json.get('fromDate')
+    to_date = request.json.get('toDate')
+    order_id = request.json.get('order_id')
+
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    orders = OrderService.order_query_by_uid_date(
+        user_id, order_id, 1, from_date, to_date, 1)
+
+    return make_api_response(payload=orders)
 
 @exports("order/query/buying", methods=['POST'])
 @login_required
@@ -527,4 +470,15 @@ def query_buying_orders():
     @apiErrorExample {json} 返回样例:
                    {"status": "fail", "message": "用户不存在"}
     """
-    pass
+    from_date = request.json.get('fromDate')
+    to_date = request.json.get('toDate')
+    order_id = request.json.get('order_id')
+
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    orders = OrderService.order_query_by_uid_date(
+        user_id, order_id, 1, from_date, to_date, 3)
+
+    return make_api_response(payload=orders)

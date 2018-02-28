@@ -17,5 +17,3 @@ class AccountRefund(db.Model):
     current_balance = Column(DECIMAL)
     day = Column(Integer)
     month = Column(Integer)
-    created_at = Column(TIMESTAMP)
-    updated_at = Column(TIMESTAMP)

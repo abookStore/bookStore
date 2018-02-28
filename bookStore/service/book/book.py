@@ -2,6 +2,7 @@
 
 from bookStore import db
 from bookStore.mappings.book import Book
+from bookStore.service.user.user import UserService
 
 class BookService():
 
@@ -23,6 +24,7 @@ class BookService():
                 book_info['quantity'] = row.quantity
                 book_info['description'] = row.description
                 book_info['price'] = float(row.price)
+                book_info['supplier_id'] = row.supplier_id
                 book_info['supplier'] = row.supplier
 
                 books[row.id] = book_info
@@ -48,6 +50,7 @@ class BookService():
                 book_info['quantity'] = row.quantity
                 book_info['description'] = row.description
                 book_info['price'] = float(row.price)
+                book_info['supplier_id'] = row.supplier_id
                 book_info['supplier'] = row.supplier
 
                 book_info_all[row.id] = book_info
@@ -71,13 +74,14 @@ class BookService():
             book_info['quantity'] = row.quantity
             book_info['description'] = row.description
             book_info['price'] = float(row.price)
+            book_info['supplier_id'] = row.supplier_id
             book_info['supplier'] = row.supplier
 
             return book_info
 
         return None
 
-    def book_add(self, book_info):
+    def book_add(self, user_id, book_info):
         """
         新增书目
         """
@@ -90,6 +94,11 @@ class BookService():
             book.quantity = book_info.get('quantity')
             book.description = book_info.get('description')
             book.price = book_info.get('price')
+            book.supplier_id = user_id
+
+            user_service = UserService()
+            user_name = user_service.query_user_by_id(user_id).get('username')
+            book.supplier = user_name
             book.is_active = 1
 
             db.session.add(book)
@@ -168,3 +177,28 @@ class BookService():
             return True
 
         return False
+
+    def books_query_by_supplier(self, supplier_id):
+        """
+        单个供应商的书库里可提供的全部书目
+        """
+        rows = db.session.query(Book).filter_by(
+            supplier_id=supplier_id, is_active=1).all()
+        book_info = {}
+        books = {}
+        for row in rows:
+            book_info = {}
+            book_info['id'] = row.id
+            book_info['name'] = row.name
+            book_info['author'] = row.author
+            book_info['press'] = row.press
+            book_info['isbn'] = row.isbn
+            book_info['quantity'] = row.quantity
+            book_info['description'] = row.description
+            book_info['price'] = float(row.price)
+            book_info['supplier_id'] = row.supplier_id
+            book_info['supplier'] = row.supplier
+
+            books[row.id] = book_info
+        return book_info
+

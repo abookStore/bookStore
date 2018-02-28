@@ -42,47 +42,15 @@ class OrderService():
         raise NotImplementedError('不支持的查询方式')
 
     @staticmethod
-    def order_query_by_uid_date(uid, order_id, status, from_date, to_date):
+    def order_query_by_uid_date(uid, order_id, status, from_date, to_date, order_type):
         """
         根据用户名查询 全部order
         """
-        payload = {}
         if uid:
-            sql = """
-            SELECT
-                *
-            FROM `order`
-            WHERE user_id = :user_id
-            AND order_status = :status
-            """
-            if order_id:
-                sql += 'AND order_id = :order_id\n'
-            if from_date:
-                sql += 'AND created_at >= :from_date\n'
-            if to_date:
-                sql += 'AND created_at <= :to_date\n'
+            sql = OrderService._get_order_query_sql(
+                uid, order_id, status, from_date, to_date, order_type)
 
-            sql += 'ORDER BY id DESC'
-            rows = db.session.execute(sql, {
-                "user_id": uid,
-                "status": status,
-                "order_id": order_id,
-                "from_date": from_date,
-                "to_date": to_date
-                }).fetchall()
-            for row in rows:
-                order = {
-                    'order_id': str(row.order_id),
-                    'user_id': row.user_id,
-                    'quantity': row.quantity,
-                    'origin_cost': float(row.origin_cost),
-                    'actual_cost': float(row.actual_cost),
-                    'order_status': row.order_status,
-                    'delivery_status': row.delivery_status,
-                    'pay_status': row.pay_status
-                }
-                payload[row.order_id] = order
-            return payload
+            return OrderService._get_order(sql, uid, order_id, status, from_date, to_date)
 
         raise NotImplementedError('不支持的查询方式')
 
@@ -134,7 +102,7 @@ class OrderService():
         raise NotImplementedError('不支持的查询方式')
 
     @staticmethod
-    def order_detail_query(order_id):
+    def order_detail_query(order_id, user_id, sell=False):
         """
         根据订单名查询 订单的详细书目信息
         """
@@ -145,9 +113,13 @@ class OrderService():
                 *
             FROM order_detail
             WHERE order_id = :order_id
-            ORDER BY id DESC
             """
-            rows = db.session.execute(sql, {"order_id": order_id}).fetchall()
+            if sell:
+                sql += "AND supplier_id = :user_id"
+
+            sql += "ORDER BY id DESC;"
+            
+            rows = db.session.execute(sql, {"order_id": order_id, "user_id": user_id}).fetchall()
             for row in rows:
                 order_detail = {
                     'order_id': row.order_id,
@@ -158,6 +130,7 @@ class OrderService():
                     'discount': float(row.discount),
                     'order_quantity': row.order_quantity,
                     'deliveried_quantity': row.deliveried_quantity,
+                    'supplier_id': row.supplier_id,
                     'warehouse': row.warehouse
                 }
                 payload[row.book_name] = order_detail
@@ -270,3 +243,71 @@ class OrderService():
             rand += str(r)
 
         return int(now + rand)
+
+    @staticmethod
+    def _get_order_query_sql(uid, order_id, status, from_date, to_date, orider_type):
+        """
+        根据条件生成订单查询的sql
+        """
+        if order_type in (1, 2):
+            sql = """
+            SELECT
+                *
+            FROM `order`
+            WHERE user_id = :user_id
+            AND order_status = :status
+            """
+
+        if order_type in (3, 4):
+            sql = """
+            SELECT
+                *
+            FROM `order_detail` a
+            LEFT JOIN `order` b ON a.order_id = b.order_id
+            WHERE supplier_id = :supplier_id
+            AND order_status = :status
+            """
+
+        if order_type in (1, 3):
+                sql += 'AND delivery_status = 1'
+        if order_type in (2, 4):
+                sql += 'AND delivery_status = 0'
+
+        if order_id:
+            sql += 'AND order_id = :order_id\n'
+        if from_date:
+            sql += 'AND created_at >= :from_date\n'
+        if to_date:
+            sql += 'AND created_at <= :to_date\n'
+
+        sql += 'ORDER BY id DESC'
+
+        return sql
+
+    @staticmethod
+    def _get_order(sql, uid, order_id, status, from_date, to_date):
+        """
+        获取 order 的信息
+        """
+        payload = {}
+        rows = db.session.execute(sql, {
+            "user_id": uid,
+            "status": status,
+            "order_id": order_id,
+            "from_date": from_date,
+            "to_date": to_date
+        }).fetchall()
+
+        for row in rows:
+            order = {
+                'order_id': row.order_id,
+                'user_id': row.user_id,
+                'quantity': row.quantity,
+                'origin_cost': float(row.origin_cost),
+                'actual_cost': float(row.actual_cost),
+                'order_status': row.order_status,
+                'delivery_status': row.delivery_status,
+                'pay_status': row.pay_status
+            }
+            payload[row.order_id] = order
+        return payload
