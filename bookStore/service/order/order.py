@@ -8,6 +8,8 @@ from bookStore.service.order.shopping_cart import CartService
 from bookStore.service.user.address import AddressInfoService
 from bookStore.service.user.account import AccountService
 from bookStore.service.book.book import BookService
+
+
 class OrderService():
 
     @staticmethod
@@ -118,8 +120,9 @@ class OrderService():
                 sql += "AND supplier_id = :user_id"
 
             sql += "ORDER BY id DESC;"
-            
-            rows = db.session.execute(sql, {"order_id": order_id, "user_id": user_id}).fetchall()
+
+            rows = db.session.execute(
+                sql, {"order_id": order_id, "user_id": user_id}).fetchall()
             for row in rows:
                 order_detail = {
                     'order_id': row.order_id,
@@ -149,7 +152,6 @@ class OrderService():
         if account_info['balance'] < float(total_info['actual_cost']):
             return False, "余额不足"
 
-
         # 查询购物车
         books = cart.cart_info_query(user_id)
         if not books:
@@ -170,7 +172,6 @@ class OrderService():
         db.session.add(order)
         db.session.flush()
 
-
         for book in books.values():
             # order_detail 表
             order_detail = OrderDetail()
@@ -190,7 +191,8 @@ class OrderService():
 
             # book 表修改库存书
             book_service = BookService()
-            rowcount = book_service.book_quantity_update(book['book_id'], - book['order_quantity'])
+            rowcount = book_service.book_quantity_update(
+                book['book_id'], - book['order_quantity'])
 
             if rowcount is False:
                 db.session.rollback()
@@ -269,9 +271,9 @@ class OrderService():
             """
 
         if order_type in (1, 3):
-                sql += 'AND delivery_status = 1'
+            sql += 'AND delivery_status = 1'
         if order_type in (2, 4):
-                sql += 'AND delivery_status = 0'
+            sql += 'AND delivery_status = 0'
 
         if order_id:
             sql += 'AND order_id = :order_id\n'

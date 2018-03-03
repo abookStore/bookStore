@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-
+from werkzeug.utils import secure_filename
 from flask import request
 from flask_login import current_user, login_required
 from bookStore.mappings.book import Book
 from bookStore.service.book.book import BookService
 from bookStore.views.api import exports
 from bookStore.views import make_api_response
+
+ALLOWED_EXTENSIONS = set(['xls', 'xlsx'])
+
 
 @exports('/book/query_by_isbn/<isbn>', methods=['GET'])
 # @login_required
@@ -23,17 +26,17 @@ def query_book_by_isbn(isbn):
                         "status": "ok",
                         "payload": {
                             "1": {
-                            "name": "论语", 
-                            "press": "北京教育出版社", 
-                            "id": 1, 
-                            "description": null, 
-                            "quantity": 100, 
-                            "price": 0.0, 
-                            "author": "周杰伦", 
+                            "name": "论语",
+                            "press": "北京教育出版社",
+                            "id": 1,
+                            "description": null,
+                            "quantity": 100,
+                            "price": 0.0,
+                            "author": "周杰伦",
                             "isbn": 9203204223,
                             "supplier": "天人1"
                             }
-                        }, 
+                        },
                         "message": "ok"
                         }
     @apiError (400) {String} msg 信息
@@ -45,7 +48,7 @@ def query_book_by_isbn(isbn):
         rv = book_service.book_query_by_isbn(isbn)
 
         return make_api_response(payload=rv, message='ok', statusCode=200)
-    
+
     return make_api_response(message='缺少isbn')
 
 
@@ -65,17 +68,17 @@ def query_book_by_name(name):
                         "status": "ok",
                         "payload": {
                             "1": {
-                            "name": "论语", 
-                            "press": "北京教育出版社", 
-                            "id": 1, 
-                            "description": null, 
-                            "quantity": 100, 
-                            "price": 0.0, 
-                            "author": "周杰伦", 
+                            "name": "论语",
+                            "press": "北京教育出版社",
+                            "id": 1,
+                            "description": null,
+                            "quantity": 100,
+                            "price": 0.0,
+                            "author": "周杰伦",
                             "isbn": 9203204223,
                             "supplier": "天人1"
                             }
-                        }, 
+                        },
                         "message": "ok"
                         }
     @apiError (400) {String} msg 信息
@@ -105,6 +108,7 @@ def book_remove(book_id):
         else:
             return make_api_response('操作失败')
     return make_api_response(message='缺少书目id')
+
 
 @exports('/book/update', methods=['POST'])
 @login_required
@@ -189,18 +193,18 @@ def book_supplied():
                         "status": "ok",
                         "payload": {
                             "1": {
-                            "name": "论语", 
-                            "press": "北京教育出版社", 
-                            "id": 1, 
-                            "description": null, 
-                            "quantity": 100, 
-                            "price": 0.0, 
-                            "author": "周杰伦", 
+                            "name": "论语",
+                            "press": "北京教育出版社",
+                            "id": 1,
+                            "description": null,
+                            "quantity": 100,
+                            "price": 0.0,
+                            "author": "周杰伦",
                             "isbn": 9203204223,
                             "supplier_id": 12,
                             "supplier": "天人1"
                             }
-                        }, 
+                        },
                         "message": "ok"
                         }
     @apiError (400) {String} msg 信息
@@ -215,3 +219,32 @@ def book_supplied():
         return make_api_response(payload=rv, message='ok', statusCode=200)
 
     return make_api_response(message='用户不存在', statusCode=400)
+
+
+@exports('/book/upload_by_excel', methods=['POST'])
+@login_required
+def book_upload_by_excel():
+    """
+    上传包含书目库存信息的excel
+    """
+    user_id = current_user.id
+    if user_id:
+        book_file = request.files.get('file', None)
+        if book_file is None or not allowed_file(secure_filename(book_file.filename)):
+            return make_api_response(message='文件不存在或类型有误', statusCode=400)
+
+            # TODO
+            # 遍历excel 存入db
+            book_service = BookService()
+            rv = book_service.add_books_by_excel(user_id, book_file)
+            if rv:
+                return make_api_response()
+
+            return make_api_response(message='操作失败', statusCode=400)
+    return make_api_response(message='用户不存在', statusCode=400)
+
+# 用于判断文件后缀
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

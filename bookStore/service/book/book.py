@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-
+import pandas as pd
+import numpy as np
+import xlrd
 from bookStore import db
 from bookStore.mappings.book import Book
 from bookStore.service.user.user import UserService
+
 
 class BookService():
 
@@ -11,7 +14,8 @@ class BookService():
         根据 isbn 来搜索书目
         """
         if isbn:
-            rows = db.session.query(Book).filter_by(isbn=isbn, is_active=1).all()
+            rows = db.session.query(Book).filter_by(
+                isbn=isbn, is_active=1).all()
             book_info = {}
             books = {}
             for row in rows:
@@ -78,6 +82,31 @@ class BookService():
             book_info['supplier'] = row.supplier
 
             return book_info
+
+        return None
+
+    def book_query_by_isbn_and_supplier(self, isbn, supplier_id):
+        """
+        根据 supplier 和 isbn 来搜索唯一书目
+        """
+        if isbn and supplier_id:
+            row = db.session.query(Book).filter_by(
+                isbn=isbn, supplier_id=supplier_id, is_active=1).first()
+
+            if row:
+                book_info = {}
+                book_info['id'] = row.id
+                book_info['name'] = row.name
+                book_info['author'] = row.author
+                book_info['press'] = row.press
+                book_info['isbn'] = row.isbn
+                book_info['quantity'] = row.quantity
+                book_info['description'] = row.description
+                book_info['price'] = float(row.price)
+                book_info['supplier_id'] = row.supplier_id
+                book_info['supplier'] = row.supplier
+
+                return book_info
 
         return None
 
@@ -202,3 +231,36 @@ class BookService():
             books[row.id] = book_info
         return book_info
 
+    def add_books_by_excel(self, user_id, file):
+        """
+        根据上传的 excel 更新书目库
+        """
+        user_service = UserService()
+        user = user_service.query_user_by_id(user_id)
+        try:
+            df = pd.read_excel(file)
+            for ix, row in df.iterrows():
+                book = {}
+                book['isbn'] = row.get('isbn')
+                book['name'] = row.get('name')
+                book['author'] = row.get('author')
+                book['press'] = row.get('press')
+                book['quantity'] = row.get('quantity')
+                book['description'] = row.get('description')
+                book['price'] = row.get('price')
+                book['supplier_id'] = user_id
+                book['supplier_name'] = user.get('username')
+
+                # 判断是否存在
+                old_book = self.book_query_by_isbn_and_supplier(
+                    row.get('isbn'), user_id)
+
+                if old_book:
+                    self.book_update(old_book['id'], book)
+                else:
+                    self.book_add(user_id, book)
+
+            return True
+
+        except Exception:
+            return False
