@@ -38,8 +38,6 @@ def login():
     """
     username = request.json['username']
     password = request.json['password']
-    app.logger.error(username)
-    app.logger.error(password)
     if not username or not password:
         return make_api_response(message='参数错误：缺少用户名或密码', statusCode=400)
 

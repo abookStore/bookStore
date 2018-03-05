@@ -38,7 +38,7 @@ class OrderService():
                     'delivery_status': row.delivery_status,
                     'pay_status': row.pay_status
                 }
-                payload[row.order_id] = order
+                payload[str(row.order_id)] = order
             return payload
 
         raise NotImplementedError('不支持的查询方式')
@@ -117,7 +117,7 @@ class OrderService():
             WHERE order_id = :order_id
             """
             if sell:
-                sql += "AND supplier_id = :user_id"
+                sql += "AND supplier_id = :user_id\n"
 
             sql += "ORDER BY id DESC;"
 
@@ -247,15 +247,15 @@ class OrderService():
         return int(now + rand)
 
     @staticmethod
-    def _get_order_query_sql(uid, order_id, status, from_date, to_date, orider_type):
+    def _get_order_query_sql(uid, order_id, status, from_date, to_date, order_type):
         """
         根据条件生成订单查询的sql
         """
-        if order_type in (1, 2):
+        if order_type in (0, 1, 2):
             sql = """
             SELECT
                 *
-            FROM `order`
+            FROM `order` a
             WHERE user_id = :user_id
             AND order_status = :status
             """
@@ -271,18 +271,18 @@ class OrderService():
             """
 
         if order_type in (1, 3):
-            sql += 'AND delivery_status = 1'
+            sql += 'AND delivery_status = 1\n'
         if order_type in (2, 4):
-            sql += 'AND delivery_status = 0'
+            sql += 'AND delivery_status = 0\n'
 
         if order_id:
             sql += 'AND order_id = :order_id\n'
         if from_date:
-            sql += 'AND created_at >= :from_date\n'
+            sql += 'AND a.created_at >= :from_date\n'
         if to_date:
-            sql += 'AND created_at <= :to_date\n'
+            sql += 'AND a.created_at <= :to_date\n'
 
-        sql += 'ORDER BY id DESC'
+        sql += 'ORDER BY a.id DESC'
 
         return sql
 
@@ -294,6 +294,7 @@ class OrderService():
         payload = {}
         rows = db.session.execute(sql, {
             "user_id": uid,
+            "supplier_id": uid,
             "status": status,
             "order_id": order_id,
             "from_date": from_date,
@@ -302,7 +303,7 @@ class OrderService():
 
         for row in rows:
             order = {
-                'order_id': row.order_id,
+                'order_id': str(row.order_id),
                 'user_id': row.user_id,
                 'quantity': row.quantity,
                 'origin_cost': float(row.origin_cost),
@@ -311,5 +312,5 @@ class OrderService():
                 'delivery_status': row.delivery_status,
                 'pay_status': row.pay_status
             }
-            payload[row.order_id] = order
+            payload[str(row.order_id)] = order
         return payload

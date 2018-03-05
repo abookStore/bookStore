@@ -56,7 +56,8 @@ def query_orders():
     if not user_id:
         return make_api_response(message="用户不存在", statusCode=400)
 
-    orders = OrderService.order_query_by_uid_date(user_id, order_id, 1, from_date, to_date)
+    orders = OrderService.order_query_by_uid_date(
+        user_id, order_id, 1, from_date, to_date, 0)
 
     return make_api_response(payload=orders)
 
@@ -75,7 +76,7 @@ def query_closed_orders():
         return make_api_response(message="用户不存在", statusCode=400)
 
     orders = OrderService.order_query_by_uid_date(
-        user_id, order_id, 0, from_date, to_date)
+        user_id, order_id, 0, from_date, to_date, 0)
 
     return make_api_response(payload=orders)
 
@@ -94,7 +95,7 @@ def query_return_orders():
         return make_api_response(message="用户不存在", statusCode=400)
 
     orders = OrderService.order_query_by_uid_date(
-        user_id, order_id, 2, from_date, to_date)
+        user_id, order_id, 2, from_date, to_date, 0)
 
     return make_api_response(payload=orders)
 
@@ -116,6 +117,7 @@ def query_ready_orders():
         user_id, order_id, 1, from_date, to_date)
 
     return make_api_response(payload=orders)
+
 
 @exports('/order/detail/<order_id>', methods=['GET'])
 @login_required
@@ -217,15 +219,16 @@ def query_order_detail_sell(order_id):
     if not order_id:
         return make_api_response(message='缺少order_id', statusCode=400)
 
-    order_detail = OrderService.order_detail_query(order_id, user_id, sell=True)
+    order_detail = OrderService.order_detail_query(
+        order_id, user_id, sell=True)
 
     if order_detail:
         return make_api_response(payload=order_detail)
-    else:
+    if not order_id:
         return make_api_response(message="订单不存在", statusCode=400)
 
 
-@exports("/order/create", methods=["POST"])
+@exports('/order/create', methods=['POST'])
 @login_required
 def order_create():
     """
@@ -283,7 +286,8 @@ def order_create():
     db.session.commit()
     return make_api_response()
 
-@exports("order/query/selling", methods=['POST'])
+
+@exports('/order/query/selling', methods=['POST'])
 @login_required
 def query_selling_orders():
     """
@@ -333,7 +337,8 @@ def query_selling_orders():
 
     return make_api_response(payload=orders)
 
-@exports("order/query/sold", methods=['POST'])
+
+@exports('/order/query/sold', methods=['POST'])
 @login_required
 def query_sold_orders():
     """
@@ -379,11 +384,12 @@ def query_sold_orders():
         return make_api_response(message="用户不存在", statusCode=400)
 
     orders = OrderService.order_query_by_uid_date(
-        user_id, order_id, 1, from_date, to_date, 2)
+        user_id, order_id, 1, from_date, to_date, 3)
 
     return make_api_response(payload=orders)
 
-@exports("order/query/bought", methods=['POST'])
+
+@exports('/order/query/bought', methods=['POST'])
 @login_required
 def query_bought_orders():
     """
@@ -433,7 +439,8 @@ def query_bought_orders():
 
     return make_api_response(payload=orders)
 
-@exports("order/query/buying", methods=['POST'])
+
+@exports('/order/query/buying', methods=['POST'])
 @login_required
 def query_buying_orders():
     """
@@ -479,6 +486,6 @@ def query_buying_orders():
         return make_api_response(message="用户不存在", statusCode=400)
 
     orders = OrderService.order_query_by_uid_date(
-        user_id, order_id, 1, from_date, to_date, 3)
+        user_id, order_id, 1, from_date, to_date, 2)
 
     return make_api_response(payload=orders)

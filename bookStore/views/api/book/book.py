@@ -177,7 +177,7 @@ def book_add():
         return make_api_response(message='更新失败', statusCode=400)
 
 
-@exports('/book/supplied', methods=['POST'])
+@exports('/book/supplied', methods=['GET'])
 @login_required
 def book_supplied():
     """

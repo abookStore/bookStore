@@ -26,6 +26,7 @@ class SiteUser():
     def get_id(self):
         return 0 if self.user is None else self.user.id
 
+
 class UserService():
 
     @staticmethod
@@ -107,7 +108,6 @@ class UserService():
             return None
 
         raise NotImplementedError('不支持的查询方式')
-
 
     @staticmethod
     def create_user(userinfo):

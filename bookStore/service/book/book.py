@@ -32,7 +32,8 @@ class BookService():
                 book_info['supplier'] = row.supplier
 
                 books[row.id] = book_info
-            return book_info
+
+            return books
 
         return None
 
@@ -229,7 +230,7 @@ class BookService():
             book_info['supplier'] = row.supplier
 
             books[row.id] = book_info
-        return book_info
+        return books
 
     def add_books_by_excel(self, user_id, file):
         """
