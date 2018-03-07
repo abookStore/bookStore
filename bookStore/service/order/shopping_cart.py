@@ -57,9 +57,6 @@ class CartService():
         book_service = BookService()
         book = book_service.book_query_by_id(book_id)
         price = book['price']
-        account_service = AccountService()
-        account = account_service.account_query(user_id)
-        discount = account['discount']
 
         cart = ShoppingCart()
         cart.user_id = user_id
@@ -70,9 +67,9 @@ class CartService():
         cart.supplier = book['supplier']
         cart.origin_price = price
         cart.order_quantity = quantity
-        cart.discount = discount
-        cart.actual_price = price * discount
-        cart.total_price = price * quantity * discount
+        cart.discount = book['discount']
+        cart.actual_price = price * book['discount']
+        cart.total_price = price * quantity * book['discount']
 
         db.session.add(cart)
         db.session.flush()

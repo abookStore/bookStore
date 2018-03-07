@@ -34,7 +34,8 @@ def query_book_by_isbn(isbn):
                             "price": 0.0,
                             "author": "周杰伦",
                             "isbn": 9203204223,
-                            "supplier": "天人1"
+                            "supplier": "天人1",
+                            "discount": 0.5
                             }
                         },
                         "message": "ok"
@@ -76,7 +77,8 @@ def query_book_by_name(name):
                             "price": 0.0,
                             "author": "周杰伦",
                             "isbn": 9203204223,
-                            "supplier": "天人1"
+                            "supplier": "天人1",
+                            "discount": 0.5
                             }
                         },
                         "message": "ok"
@@ -124,6 +126,7 @@ def book_update():
     quantity = request.json['quantity']
     price = request.json['price']
     description = request.json['description']
+    discount = request.json['discount']
 
     book_info = {
         'isbn': isbn,
@@ -132,7 +135,8 @@ def book_update():
         'press': press,
         'quantity': quantity,
         'price': price,
-        'description': description
+        'description': description,
+        'discount': discount
     }
     book_service = BookService()
     rv = book_service.book_update(book_id, book_info)
@@ -157,6 +161,7 @@ def book_add():
     quantity = request.json['quantity']
     price = request.json['price']
     description = request.json['description']
+    discount = request.json['discount']
 
     book_info = {
         'isbn': isbn,
@@ -166,6 +171,7 @@ def book_add():
         'quantity': quantity,
         'price': price,
         'description': description,
+        'discount': discount,
         'is_active': 1
     }
     book_service = BookService()
@@ -202,7 +208,8 @@ def book_supplied():
                             "author": "周杰伦",
                             "isbn": 9203204223,
                             "supplier_id": 12,
-                            "supplier": "天人1"
+                            "supplier": "天人1",
+                            "discount": 0.4
                             }
                         },
                         "message": "ok"

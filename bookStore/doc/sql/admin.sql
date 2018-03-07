@@ -1,0 +1,14 @@
+SET NAMES utf8;
+
+CREATE DATABASE IF NOT EXISTS bookstore;
+
+USE bookstore;
+
+CREATE TABLE IF NOT EXISTS `admin` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL COMMENT '用户id',
+  `auth` int(11) DEFAULT NULL COMMENT '权限等级',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

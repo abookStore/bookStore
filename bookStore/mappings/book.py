@@ -21,4 +21,5 @@ class Book(db.Model):
     price = Column(DECIMAL)
     supplier_id = Column(Integer)
     supplier = Column(String)
+    discount = Column(DECIMAL)
     is_active = Column(Integer)

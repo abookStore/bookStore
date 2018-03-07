@@ -314,3 +314,57 @@ class OrderService():
             }
             payload[str(row.order_id)] = order
         return payload
+
+    @staticmethod
+    def update_delivery_status(user_id, order_id, status):
+        """
+        更新订单的送货状态
+        """
+        sql = """
+        UPDATE `order` SET
+            delivery_status = :status
+        WHERE id = :order_id
+        AND user_id = :user_id
+        LIMIT 1
+        """
+
+        params = {
+            'status': status,
+            'order_id': order_id,
+            'user_id': user_id
+        }
+
+        rc = db.session.execute(sql, params).rowcount
+
+        return rc
+
+    @staticmethod
+    def update_detail_delivery_quantity(user_id, order_id, quantity=None):
+        """
+        更新订单详情的已发货数量
+        """
+        params = {
+            'quantity': quantity,
+            'order_id': order_id,
+            'user_id': user_id
+        }
+        sql = """
+        UPDATE `order_detail` SET
+            deliveried_quantity = :order_quantity
+        WHERE id = :order_id
+        AND supplier_id = :user_id
+        LIMIT 1
+        """
+
+        if quantity is not None:
+            sql = """
+            UPDATE `order_detail` SET
+                deliveried_quantity = :quantity
+            WHERE id = :order_id
+            AND supplier_id = :user_id
+            LIMIT 1
+            """
+
+        rc = db.session.execute(sql, params).rowcount
+
+        return rc

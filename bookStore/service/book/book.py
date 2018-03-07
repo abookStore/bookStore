@@ -30,6 +30,7 @@ class BookService():
                 book_info['price'] = float(row.price)
                 book_info['supplier_id'] = row.supplier_id
                 book_info['supplier'] = row.supplier
+                book_info['discount'] = float(row.discount)
 
                 books[row.id] = book_info
 
@@ -57,6 +58,7 @@ class BookService():
                 book_info['price'] = float(row.price)
                 book_info['supplier_id'] = row.supplier_id
                 book_info['supplier'] = row.supplier
+                book_info['discount'] = float(row.discount)
 
                 book_info_all[row.id] = book_info
             return book_info_all
@@ -81,6 +83,7 @@ class BookService():
             book_info['price'] = float(row.price)
             book_info['supplier_id'] = row.supplier_id
             book_info['supplier'] = row.supplier
+            book_info['discount'] = float(row.discount)
 
             return book_info
 
@@ -106,6 +109,7 @@ class BookService():
                 book_info['price'] = float(row.price)
                 book_info['supplier_id'] = row.supplier_id
                 book_info['supplier'] = row.supplier
+                book_info['discount'] = float(row.discount)
 
                 return book_info
 
@@ -124,6 +128,7 @@ class BookService():
             book.quantity = book_info.get('quantity')
             book.description = book_info.get('description')
             book.price = book_info.get('price')
+            book.discount = book_info.get('discount')
             book.supplier_id = user_id
 
             user_service = UserService()
@@ -155,6 +160,7 @@ class BookService():
             book.quantity = book_info.get('quantity')
             book.price = book_info.get('price')
             book.description = book_info.get('description')
+            book.discount = book_info.get('discount')
 
             db.session.flush(book)
             db.session.commit()
@@ -228,6 +234,7 @@ class BookService():
             book_info['price'] = float(row.price)
             book_info['supplier_id'] = row.supplier_id
             book_info['supplier'] = row.supplier
+            book_info['discount'] = float(row.discount)
 
             books[row.id] = book_info
         return books
@@ -251,6 +258,7 @@ class BookService():
                 book['price'] = row.get('price')
                 book['supplier_id'] = user_id
                 book['supplier_name'] = user.get('username')
+                book['discount'] = row.get('discount')
 
                 # 判断是否存在
                 old_book = self.book_query_by_isbn_and_supplier(

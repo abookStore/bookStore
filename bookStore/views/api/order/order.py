@@ -489,3 +489,49 @@ def query_buying_orders():
         user_id, order_id, 1, from_date, to_date, 2)
 
     return make_api_response(payload=orders)
+
+
+@exports('/order/detail/deliveried/<order_id>/<quantity>', methods=['GET'])
+@login_required
+def update_detail_deliveried(order_id, quantity):
+    """
+    @api {GET} /order/detail/deliveried/<order_id>/<quantity> 修改详细订单中每单的已发货数
+    @apiGroup Order
+    @apiVersion 0.0.1
+    @apiDescription 修改详细订单中每单的已发货数
+    """
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    rc = OrderService.update_detail_delivery_quantity(user_id, order_id, quantity)
+
+    if rc > 0:
+        db.session.commit()
+        return make_api_response()
+    else:
+        db.session.rollback()
+        return make_api_response(message='操作失败', statusCode=200)
+
+
+@exports('/order/deliveried/<order_id>', methods=['GET'])
+@login_required
+def update_deliveried(order_id):
+    """
+    @api {GET} /order/delivering/<order_id> 订单发货状态变为确认收货
+    @apiGroup Order
+    @apiVersion 0.0.1
+    @apiDescription 订单发货状态变为确认收货
+    """
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    rc = OrderService.update_delivery_status(user_id, order_id, 2)
+
+    if rc > 0:
+        db.session.commit()
+        return make_api_response()
+    else:
+        db.session.rollback()
+        return make_api_response(message='操作失败', statusCode=200)

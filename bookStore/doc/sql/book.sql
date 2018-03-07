@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `book` (
   `isbn` bigint(20) NOT NULL COMMENT 'ISBN编号',
   `supplier_id` int(11) DEFAULT NULL COMMENT '供货商编号',
   `supplier` varchar(50) DEFAULT NULL COMMENT '供货商',
+  `discount` decimal(3,2) NOT NULL DEFAULT '1.00' COMMENT '图书的折扣',
   `quantity` int(11) NOT NULL DEFAULT '0' COMMENT '库存数量',
   `description` varchar(200) DEFAULT NULL COMMENT '简介',
   `price` decimal(11,2) NOT NULL DEFAULT '0.00' COMMENT '定价',
@@ -21,4 +22,4 @@ CREATE TABLE IF NOT EXISTS `book` (
   PRIMARY KEY (`id`),
   KEY `ux_name` (`name`),
   KEY `idx_isbn` (`isbn`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
