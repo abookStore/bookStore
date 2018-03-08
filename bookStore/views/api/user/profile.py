@@ -29,7 +29,8 @@ def query_user_info():
                             "nickname": "guest",
                             "gender": "23",
                             "password": "pwd",
-                            "qq": "12312"
+                            "qq": "12312",
+                            "is_admin": True
                         }
                     }
     @apiError (400) {String} msg 信息
@@ -40,6 +41,13 @@ def query_user_info():
     userinfo = UserService.query_user_by_id(userid=user_id)
 
     if userinfo:
+        is_admin = UserService.is_admin(user_id=user_id)
+        if is_admin:
+            is_admin = True
+        else:
+            is_admin = False
+        userinfo['payload']['is_admin'] = is_admin
+
         return make_api_response(payload=userinfo)
     else:
         return make_api_response(message="用户不存在", statusCode=400)

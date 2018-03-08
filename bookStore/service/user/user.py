@@ -182,3 +182,14 @@ class UserService():
                 rv.qq = userinfo['qq']
 
                 db.session.commit()
+
+    @staticmethod
+    def is_admin(user_id):
+        sql = """
+        SELECT
+            *
+        FROM `admin`
+        WHERE user_id = :user_id
+        """
+        row = db.session.execute(sql, {'user_id': user_id})
+        return row

@@ -44,6 +44,37 @@ def query_user_info():
         return make_api_response(message="用户不存在", statusCode=400)
 
 
+@exports('/account/query_by_id/<user_id>', methods=['GET'])
+@login_required
+def query_by_user_id(user_id):
+    """
+    @api {GET} /account/query_by_id/<user_id> 根据用户id查询用户账户信息
+    @apiGroup Users
+    @apiVersion 0.0.1
+    @apiDescription 根据用户id查询用户账户信息
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                   {
+                        "status": "ok",
+                        "payload":{
+                            "user_id": "132",
+                            "balance": "1283.23",
+                            "bonus_point": "3000",
+                            "discount": "0.75"
+                        }
+                    }
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "用户不存在"}
+    """
+    account_info = AccountService.account_query(user_id=user_id)
+
+    if account_info:
+        return make_api_response(payload=account_info)
+    else:
+        return make_api_response(message="用户不存在", statusCode=400)
+
 @exports('/accountlog/query', methods=['GET'])
 @login_required
 def query_user_account_log():
