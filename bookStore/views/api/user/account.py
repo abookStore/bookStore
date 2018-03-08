@@ -4,7 +4,7 @@ import logging
 from flask import request
 from flask_login import current_user, login_required
 
-from bookStore import app
+from bookStore import app, db
 from bookStore.service.user.account import AccountService
 from bookStore.views.api import exports
 from bookStore.views import make_api_response
@@ -111,7 +111,7 @@ def query_account_consume():
     return payload
 
 
-@exports('/account_prepare/query', methods=['GET'])
+@exports('/account_prepay/query', methods=['GET'])
 @login_required
 def query_account_prepare():
     user_id = current_user.id
@@ -154,3 +154,60 @@ def query_account_refund():
         payload[rv.id] = consume
 
     return payload
+
+
+@exports('/account/prepay/<amount>', methods=['GET'])
+@login_required
+def account_prepay(amount):
+    """
+    @api {GET} /account/prepay/<amount> 用户充值
+    @apiGroup Users
+    @apiVersion 0.0.1
+    @apiDescription 用户充值
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    """
+    user_id = current_user.id
+
+    account_service = AccountService()
+    rv = account_service.account_prepay(user_id, int(amount))
+
+    if rv is False:
+        db.session.rollback()
+        return make_api_response(statusCode=200, message='操作失败')
+
+    return make_api_response()
+
+
+@exports('/account/query_by_name/<name>', methods=['GET'])
+@login_required
+def query_account_info_by_name(name):
+    """
+    @api {GET} /account/query_by_name/<name> 根据用户名查询用户账户信息
+    @apiGroup Users
+    @apiVersion 0.0.1
+    @apiDescription 根据用户名查询用户账户信息
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                   {
+                        "status": "ok",
+                        "payload":{
+                            "user_id": "132",
+                            "balance": "1283.23",
+                            "bonus_point": "3000",
+                            "discount": "0.75"
+                        }
+                    }
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "用户不存在"}
+    """
+    user_id = current_user.id
+    app.logger.info(user_id)
+    account_info = AccountService.account_query(user_id=user_id)
+
+    if account_info:
+        return make_api_response(payload=account_info)
+    else:
+        return make_api_response(message="用户不存在", statusCode=400)

@@ -141,7 +141,7 @@ class AccountService():
             return None
 
         rows = db.session.query(AccountRefund).filter_by(
-            user_id=user_id).order_by(AccountRefund.id.desc()) .all()
+            user_id=user_id).order_by(AccountRefund.id.desc()).all()
 
         return rows
 
@@ -159,4 +159,35 @@ class AccountService():
         LIMIT 1
         """
 
-        db.session.execute(sql, {'change': change, 'user_id': user_id})
+        return db.session.execute(sql, {'change': change, 'user_id': user_id}).rowcount
+
+    def account_prepay(self, user_id, amount):
+        """
+        用户充值
+        """
+        if not amount:
+            return False
+
+        # 余额充值
+        rowcount = self.account_change(user_id, amount)
+        if rowcount < 0:
+            return False
+
+        # 记录充值log
+        now = datetime.now()
+        day = int(now.strftime('%Y%m%d'))
+        month = int(now.strftime('%Y%m'))
+        account = AccountService.account_query(user_id)
+        balance = account['balance']
+
+        prepay = AccountPrepay()
+        prepay.user_id = user_id
+        prepay.amount = amount
+        prepay.current_balance = balance
+        prepay.day = day
+        prepay.month = month
+
+        db.session.add(prepay)
+        db.session.flush()
+
+        return True
