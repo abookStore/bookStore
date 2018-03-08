@@ -46,7 +46,7 @@ def query_user_info():
             is_admin = True
         else:
             is_admin = False
-        userinfo['payload']['is_admin'] = is_admin
+        userinfo['is_admin'] = is_admin
 
         return make_api_response(payload=userinfo)
     else:
