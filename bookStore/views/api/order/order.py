@@ -486,7 +486,7 @@ def update_detail_deliveried(order_id, quantity):
 @login_required
 def update_deliveried(order_id):
     """
-    @api {GET} /order/delivering/<order_id> 订单发货状态变为确认收货
+    @api {GET} /order/deliveried/<order_id> 订单发货状态变为确认收货
     @apiGroup Order
     @apiVersion 0.0.1
     @apiDescription 订单发货状态变为确认收货
@@ -498,6 +498,30 @@ def update_deliveried(order_id):
     rc = OrderService.update_delivery_status(user_id, order_id, 2)
 
     if rc > 0:
+        db.session.commit()
+        return make_api_response()
+    else:
+        db.session.rollback()
+        return make_api_response(message='操作失败', statusCode=200)
+
+
+@exports('/order/delivering/<order_id>', methods=['GET'])
+@login_required
+def update_delivering(order_id):
+    """
+    @api {GET} /order/delivering/<order_id> 订单发货状态变为已发货
+    @apiGroup Order
+    @apiVersion 0.0.1
+    @apiDescription 订单发货状态变为已发货
+    """
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    rc1 = OrderService.update_delivery_status(user_id, order_id, 1)
+    rc2 = OrderService.update_detail_delivery_quantity(user_id, order_id)
+
+    if rc1 > 0 and rc2 > 0:
         db.session.commit()
         return make_api_response()
     else:
