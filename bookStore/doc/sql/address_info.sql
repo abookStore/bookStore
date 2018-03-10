@@ -4,7 +4,7 @@ CREATE DATABASE IF NOT EXISTS bookstore;
 
 USE bookstore;
 
-CREATE TABLE `address_info` (
+CREATE TABLE IF NOT EXISTS `address_info` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL COMMENT '用户id',
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '收货人姓名',
