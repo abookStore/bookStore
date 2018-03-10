@@ -191,5 +191,6 @@ class UserService():
         FROM `admin`
         WHERE user_id = :user_id
         """
-        row = db.session.execute(sql, {'user_id': user_id})
-        return row
+        rowcount = db.session.execute(sql, {'user_id': user_id}).rowcount
+
+        return rowcount
