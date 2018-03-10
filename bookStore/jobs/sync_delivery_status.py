@@ -6,7 +6,7 @@ def run():
     while True:
         rv = sync_delivery_status()
         if rv is True:
-            sleep(5)
+            time.sleep(5)
 
 
 def sync_delivery_status():
@@ -20,7 +20,6 @@ def sync_delivery_status():
         rv = update_delivery_status(order_ids)
         return rv
 
-    app.logger.info('无可同步订单')
     return False
 
 def get_order_id():
@@ -49,14 +48,16 @@ def check_order_detail(order_ids):
     FROM (
         select
             order_id,
-            sum(deliveried_quantity) sum_d,
-            sum(order_quantity) sum_o
+            sum(deliveried_quantity) sum_d
         from order_detail
         GROUP by order_id
     )o
-    WHERE sum_d = sum_o
+    WHERE sum_d > 0
     AND order_id in :order_ids;
     """
+
+    if not order_ids:
+        return
 
     rows = db.session.execute(sql, {"order_ids": order_ids})
 
@@ -73,15 +74,18 @@ def update_delivery_status(order_ids):
     WHERE order_id in :order_ids
     """
 
-    rowcount = db.session().execute(sql, {"order_ids": order_ids}).rowcount
+    if not order_ids:
+        return
+
+    rowcount = db.session.execute(sql, {"order_ids": order_ids}).rowcount
 
     if rowcount > 0:
-        db.session().commit()
+        db.session.commit()
         for order_id in order_ids:
             app.logger.info('同步配送状态完成 order_id: %s' % order_id)
         return True
     else:
-        db.session().rollback()
-        app.logger.info('同步配送状态失败)
+        db.session.rollback()
+        app.logger.info('同步配送状态失败')
         return False
 

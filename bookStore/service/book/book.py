@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import xlrd
-from bookStore import db
+from bookStore import db, app
 from bookStore.mappings.book import Book
 from bookStore.service.user.user import UserService
 
@@ -137,7 +137,7 @@ class BookService():
             book.is_active = 1
 
             db.session.add(book)
-            db.session.flush(book)
+            db.session.flush()
             db.session.commit()
 
             return True
@@ -249,27 +249,30 @@ class BookService():
             df = pd.read_excel(file)
             for ix, row in df.iterrows():
                 book = {}
-                book['isbn'] = row.get('isbn')
-                book['name'] = row.get('name')
-                book['author'] = row.get('author')
-                book['press'] = row.get('press')
-                book['quantity'] = row.get('quantity')
-                book['description'] = row.get('description')
-                book['price'] = row.get('price')
+                book['isbn'] = row.get('ISBN')
+                book['name'] = row.get('书名')
+                book['author'] = row.get('作者', '无')
+                book['press'] = row.get('出版社')
+                book['quantity'] = row.get('数量')
+                book['description'] = row.get('描述', '无')
+                book['price'] = row.get('定价')
                 book['supplier_id'] = user_id
-                book['supplier_name'] = user.get('username')
-                book['discount'] = row.get('discount')
+                book['supplier_name'] = user.get('区域')
+                book['discount'] = row.get('折扣')
 
                 # 判断是否存在
                 old_book = self.book_query_by_isbn_and_supplier(
                     row.get('isbn'), user_id)
-
+                app.logger.info(book)
                 if old_book:
+                    app.logger.info(1)
                     self.book_update(old_book['id'], book)
                 else:
+                    app.logger.info(2)
                     self.book_add(user_id, book)
 
             return True
 
-        except Exception:
+        except Exception as e:
+            app.logger.info(e)
             return False

@@ -187,22 +187,25 @@ def query_account_refund():
     return payload
 
 
-@exports('/account/prepay/<amount>', methods=['GET'])
+@exports('/account/prepay/<user_id>/<amount>', methods=['GET'])
 @login_required
-def account_prepay(amount):
+def account_prepay(user_id, amount):
     """
-    @api {GET} /account/prepay/<amount> 用户充值
+    @api {GET} /account/prepay/<user_id>/<amount> 用户充值
     @apiGroup Users
     @apiVersion 0.0.1
     @apiDescription 用户充值
     @apiSuccess (200) {String} msg 信息
     @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
     """
-    user_id = current_user.id
 
     account_service = AccountService()
-    rv = account_service.account_prepay(user_id, int(amount))
+    account = account_service.account_query(user_id)
 
+    if not account:
+        return make_api_response(message='用户id不存在', statusCode=400)
+
+    rv = account_service.account_prepay(user_id, int(amount))
     if rv is False:
         db.session.rollback()
         return make_api_response(statusCode=200, message='操作失败')

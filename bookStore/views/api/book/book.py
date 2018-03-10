@@ -2,6 +2,7 @@
 from werkzeug.utils import secure_filename
 from flask import request
 from flask_login import current_user, login_required
+from bookStore import app, db
 from bookStore.mappings.book import Book
 from bookStore.service.book.book import BookService
 from bookStore.views.api import exports
@@ -233,21 +234,30 @@ def book_supplied():
 def book_upload_by_excel():
     """
     上传包含书目库存信息的excel
+    @api {POST} /book/upload_by_excel 上传书目的 excel
+    @apiGroup book
+    @apiVersion 0.0.1
+    @apiDescription 上传书目的 excel
+    @apiParam {int} isbn
+    @apiSuccess(200) {String} msg 信息
     """
     user_id = current_user.id
+
     if user_id:
         book_file = request.files.get('file', None)
         if book_file is None or not allowed_file(secure_filename(book_file.filename)):
             return make_api_response(message='文件不存在或类型有误', statusCode=400)
 
-            # TODO
-            # 遍历excel 存入db
-            book_service = BookService()
-            rv = book_service.add_books_by_excel(user_id, book_file)
-            if rv:
-                return make_api_response()
+        # TODO
+        # 遍历excel 存入db
+        book_service = BookService()
+        rv = book_service.add_books_by_excel(user_id, book_file)
+        app.logger.info(rv)
+        if rv:
+            return make_api_response()
 
-            return make_api_response(message='操作失败', statusCode=400)
+        return make_api_response(message='操作失败', statusCode=400)
+
     return make_api_response(message='用户不存在', statusCode=400)
 
 # 用于判断文件后缀
