@@ -48,6 +48,12 @@ def query_book_by_isbn(isbn):
     if isbn:
         book_service = BookService()
         rv = book_service.book_query_by_isbn(isbn)
+        app.logger.info(rv)
+        # 去除自己的书目
+        if current_user.id and rv:
+            for k, v in rv.copy().items():
+                if str(current_user.id) == str(v.get('supplier_id')):
+                    rv.pop(k)
 
         return make_api_response(payload=rv, message='ok', statusCode=200)
 
@@ -91,6 +97,12 @@ def query_book_by_name(name):
     if name:
         book_service = BookService()
         rv = book_service.book_query_by_name(name)
+
+        # 去除自己的书目
+        if current_user.id:
+            for k, v in rv.copy().items():
+                if str(current_user.id) == str(v.get('supplier_id')):
+                    rv.pop(k)
 
         return make_api_response(payload=rv, message='ok', statusCode=200)
 

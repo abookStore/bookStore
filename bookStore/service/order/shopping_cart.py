@@ -63,7 +63,7 @@ class CartService():
         cart.book_id = book_id
         cart.book_name = book['name']
         cart.isbn = book['isbn']
-        cart.supplier = book['supplier_id']
+        cart.supplier_id = book['supplier_id']
         cart.supplier = book['supplier']
         cart.origin_price = price
         cart.order_quantity = quantity

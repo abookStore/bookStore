@@ -181,6 +181,7 @@ class OrderService():
             order_detail.isbn = book['isbn']
             order_detail.origin_price = book['origin_price']
             order_detail.actual_price = book['actual_price']
+            order_detail.supplier_id = book['supplier_id']
             order_detail.warehouse = book['supplier']
             order_detail.discount = book['discount']
             order_detail.order_quantity = book['order_quantity']
