@@ -210,6 +210,8 @@ def account_prepay(user_id, amount):
         db.session.rollback()
         return make_api_response(statusCode=200, message='操作失败')
 
+    db.session.commit()
+
     return make_api_response()
 
 
