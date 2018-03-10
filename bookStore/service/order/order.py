@@ -323,7 +323,7 @@ class OrderService():
         sql = """
         UPDATE `order` SET
             delivery_status = :status
-        WHERE id = :order_id
+        WHERE order_id = :order_id
         AND user_id = :user_id
         LIMIT 1
         """
@@ -333,9 +333,9 @@ class OrderService():
             'order_id': order_id,
             'user_id': user_id
         }
-
+        app.logger.info('status:%s order_id:%s user_id:%s' % (status, order_id, user_id))
         rc = db.session.execute(sql, params).rowcount
-
+        app.logger.info(rc)
         return rc
 
     @staticmethod
@@ -350,8 +350,8 @@ class OrderService():
         }
         sql = """
         UPDATE `order_detail` SET
-            deliveried_quantity = :order_quantity
-        WHERE id = :order_id
+            deliveried_quantity = order_quantity
+        WHERE order_id = :order_id
         AND supplier_id = :user_id
         LIMIT 1
         """
@@ -360,7 +360,7 @@ class OrderService():
             sql = """
             UPDATE `order_detail` SET
                 deliveried_quantity = :quantity
-            WHERE id = :order_id
+            WHERE order_id = :order_id
             AND supplier_id = :user_id
             LIMIT 1
             """
