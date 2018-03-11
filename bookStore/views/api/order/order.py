@@ -518,10 +518,10 @@ def update_delivering(order_id):
     if not user_id:
         return make_api_response(message="用户不存在", statusCode=400)
 
-    rc1 = OrderService.update_delivery_status(user_id, order_id, 1)
+    # rc1 = OrderService.update_delivery_status(user_id, order_id, 1)
     rc2 = OrderService.update_detail_delivery_quantity(user_id, order_id)
 
-    if rc1 > 0 and rc2 > 0:
+    if rc2 > 0:
         db.session.commit()
         return make_api_response()
     else:

@@ -67,7 +67,7 @@ class UserService():
         payload = {}
         if phone:
             rv = db.session.query(User).filter_by(
-                username=phone).first()
+                phone=phone).first()
             if rv:
                 payload['username'] = rv.username
                 payload['nickname'] = rv.nickname
@@ -135,6 +135,9 @@ class UserService():
         # 用户账户的account表
         account = Account()
         account.user_id = user.id
+        account.balance = 0.00
+        account.bonus_point = 0
+        account.discount = 1
         db.session.add(account)
         db.session.flush()
 

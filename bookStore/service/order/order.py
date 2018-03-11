@@ -179,8 +179,10 @@ class OrderService():
             order_detail.book_id = book['book_id']
             order_detail.book_name = book['book_name']
             order_detail.isbn = book['isbn']
-            order_detail.origin_price = book['origin_price']
-            order_detail.actual_price = book['actual_price']
+            order_detail.origin_price = book['origin_price'] * \
+                book['order_quantity']
+            order_detail.actual_price = book['actual_price'] * \
+                book['order_quantity']
             order_detail.supplier_id = book['supplier_id']
             order_detail.warehouse = book['supplier']
             order_detail.discount = book['discount']
@@ -272,9 +274,9 @@ class OrderService():
             """
 
         if order_type in (1, 3):
-            sql += 'AND delivery_status = 1\n'
+            sql += 'AND delivery_status = 2\n'
         if order_type in (2, 4):
-            sql += 'AND delivery_status = 0\n'
+            sql += 'AND delivery_status < 2\n'
 
         if order_id:
             sql += 'AND order_id = :order_id\n'

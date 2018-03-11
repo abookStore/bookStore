@@ -142,7 +142,7 @@ class CartService():
         """
         sql = """
         SELECT
-            SUM(origin_price) origin_cost,
+            SUM(origin_price * order_quantity) origin_cost,
             SUM(total_price) actual_cost,
             SUM(order_quantity) total_quantity
         FROM shopping_cart
