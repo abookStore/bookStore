@@ -527,3 +527,34 @@ def update_delivering(order_id):
     else:
         db.session.rollback()
         return make_api_response(message='操作失败', statusCode=200)
+
+@exports('/order/info/<order_id>', methods=['GET'])
+@login_required
+def query_order_info_by_id(order_id):
+    """
+    @api {GET} /order/info/<order_id> 查询订单对应的收货地址详情
+    @apiGroup Order
+    @apiVersion 0.0.1
+    @apiDescription 查询订单对应的收货地址详情
+    @apiParam {String} order_id 订单id
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                        {
+                            "payload":{
+                            "post_code": 100101,
+                            "address": "北京市海淀五路居西四环北路102号",
+                            "phone": 13212312321,
+                            "order_id": "2018031103121295562",
+                            "consignee": "大雄"
+                            },
+                            "status": "ok"
+                        }
+
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "用户不存在"}
+    """
+    order = OrderService.order_info_query(order_id)
+
+    return make_api_response(payload=order, statusCode=200)

@@ -104,6 +104,33 @@ class OrderService():
         raise NotImplementedError('不支持的查询方式')
 
     @staticmethod
+    def order_info_query(order_id):
+        """
+        根据用户名查询 order_info
+        """
+
+        if order_id:
+            sql = """
+            SELECT
+                *
+            FROM `order_info`
+            WHERE order_id = :order_id
+            ORDER BY id DESC
+            """
+            row = db.session.execute(sql, {"order_id": order_id}).first()
+            order_info = {
+                'order_id': str(row.order_id),
+                'consignee': row.consignee,
+                'address': row.address,
+                'phone': row.phone,
+                'post_code': row.post_code
+            }
+
+            return order_info
+
+        raise NotImplementedError('不支持的查询方式')
+
+    @staticmethod
     def order_detail_query(order_id, user_id, sell=False):
         """
         根据订单名查询 订单的详细书目信息
