@@ -262,13 +262,11 @@ class BookService():
 
                 # 判断是否存在
                 old_book = self.book_query_by_isbn_and_supplier(
-                    row.get('isbn'), user_id)
+                    row.get('ISBN'), user_id)
                 app.logger.info(book)
                 if old_book:
-                    app.logger.info(1)
                     self.book_update(old_book['id'], book)
                 else:
-                    app.logger.info(2)
                     self.book_add(user_id, book)
 
             return True
