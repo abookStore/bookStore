@@ -23,3 +23,4 @@ class User(db.Model, UserMixin):
     mail = Column(String)
     phone = Column(String)
     qq = Column(String)
+    status = Column(Integer)

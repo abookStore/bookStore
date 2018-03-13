@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `mail` varchar(255) DEFAULT NULL COMMENT '邮箱',
   `phone` varchar(255) DEFAULT NULL COMMENT '电话',
   `qq` varchar(255) DEFAULT NULL COMMENT 'QQ号',
+  `status` smallint(5) NOT NULL DEFAULT '1' COMMENT '账号状态 1:正常 2:冻结',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -23,4 +24,4 @@ CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE KEY `phone` (`phone`),
   KEY `mail` (`mail`),
   KEY `nickname` (`nickname`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;

@@ -241,6 +241,51 @@ def book_supplied():
     return make_api_response(message='用户不存在', statusCode=400)
 
 
+@exports('/book/query_by_supplier_id/<supplier_id>', methods=['GET'])
+@login_required
+def book_query_by_supplier_id(supplier_id):
+    """
+    @api {GET} /book/query_by_supplier_id/<supplier_id> 根据用户id查询该书库中可提供的全部书目
+    @apiGroup book
+    @apiVersion 0.0.1
+    @apiDescription 当前用户书库中可提供的全部书目
+    @apiParam {int} isbn
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                        {
+                        "status": "ok",
+                        "payload": {
+                            "1": {
+                            "name": "论语",
+                            "press": "北京教育出版社",
+                            "id": 1,
+                            "description": null,
+                            "quantity": 100,
+                            "price": 0.0,
+                            "author": "周杰伦",
+                            "isbn": 9203204223,
+                            "supplier_id": 12,
+                            "supplier": "天人1",
+                            "discount": 0.4
+                            }
+                        },
+                        "message": "ok"
+                        }
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "缺少isbn"}
+    """
+    user_id = current_user.id
+    if user_id:
+        book_service = BookService()
+        rv = book_service.books_query_by_supplier(supplier_id)
+
+        return make_api_response(payload=rv, message='ok', statusCode=200)
+
+    return make_api_response(message='用户不存在', statusCode=400)
+
+
 @exports('/book/upload_by_excel', methods=['POST'])
 @login_required
 def book_upload_by_excel():

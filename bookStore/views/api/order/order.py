@@ -459,6 +459,62 @@ def query_buying_orders():
     return make_api_response(payload=orders)
 
 
+@exports('/order/query/ongoing', methods=['POST'])
+@login_required
+def query_ongoing_orders():
+    """
+    @api {POST} /order/query/ongoing 查询所有正在进行中的订单信息
+    @apiGroup Order
+    @apiVersion 0.0.1
+    @apiDescription 查询所有正在进行中的订单信息
+    @apiParamExample {json} 请求样例：
+                    {
+                        "isbn": 123213232,
+                        ["fromDate": "2018-02-01"],
+                        ["toDate": "2018-03-01"]
+                    }
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                        {
+                            "payload": {
+                                "12": {
+                                "user_id": 123,
+                                "book_id": 123,
+                                "order_id": 12,
+                                "book_name": '诗经',
+                                "isbn": 1231232132,
+                                "origin_price": 22.0,
+                                "actual_price": 22.0,
+                                "discount": 0.3,
+                                "order_quantity": 10,    （书目总数）
+                                "deliveried_quantity": 10（已配送书目总数）
+                                "supplier_id": 3,
+                                "supplier_name": '人文1',
+                                "created_at": '2018-03-02 20:32:13'
+                                }
+                            },
+                            "status": "ok"
+                        }
+
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "用户不存在"}
+    """
+    from_date = request.json.get('fromDate', None)
+    to_date = request.json.get('toDate', None)
+    isbn = request.json.get('isbn')
+
+    user_id = current_user.id
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    orders = OrderService.query_ongoing_order(isbn, from_date, to_date, 0)
+
+    return make_api_response(payload=orders)
+
+
+
 @exports('/order/detail/deliveried/<order_id>/<quantity>', methods=['GET'])
 @login_required
 def update_detail_deliveried(order_id, quantity):

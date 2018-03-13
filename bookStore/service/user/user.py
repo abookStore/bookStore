@@ -3,6 +3,7 @@ import hashlib
 from bookStore import db, app
 from bookStore.mappings.user import User
 from bookStore.mappings.account import Account
+from bookStore.mappings.admin import Admin
 
 
 class SiteUser():
@@ -128,6 +129,7 @@ class UserService():
         user.gender = userinfo['gender']
         user.mail = userinfo['mail']
         user.qq = userinfo['qq']
+        user.status = 1
 
         db.session.add(user)
         db.session.flush()
@@ -139,6 +141,14 @@ class UserService():
         account.bonus_point = 0
         account.discount = 1
         db.session.add(account)
+        db.session.flush()
+
+        # 权限表
+        admin = Admin()
+        admin.user_id = user.id
+        # 默认权限为2 买卖
+        admin.auth = 2
+        db.session.add(admin)
         db.session.flush()
 
         return True
@@ -190,10 +200,40 @@ class UserService():
     def is_admin(user_id):
         sql = """
         SELECT
-            *
+            user_id,
+            auth
         FROM `admin`
         WHERE user_id = :user_id
         """
-        rowcount = db.session.execute(sql, {'user_id': user_id}).rowcount
+        row = db.session.execute(sql, {'user_id': user_id}).first()
 
-        return rowcount
+        if row:
+            return row.auth
+
+        return 0
+
+    @staticmethod
+    def query_user_all():
+        """
+        查询所有的用户
+        """
+        sql = """
+        SELECT
+            id,
+            nickname
+        FROM `user` a
+        LEFT JOIN `admin` b
+        WHERE b.auth = 2
+        AND a.status = 1
+        """
+        users = {}
+        rows = db.session.execute(sql).fetchall()
+
+        for row in rows:
+            user = {}
+            user['id'] = row.id
+            user['nickname'] = row.nickname
+
+            users[row.id] = user
+
+        return users

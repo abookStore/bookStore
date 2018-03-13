@@ -398,3 +398,71 @@ class OrderService():
         rc = db.session.execute(sql, params).rowcount
 
         return rc
+
+    @staticmethod
+    def query_ongoing_order(isbn, from_date, to_date, status=0):
+        """
+        查询所有订单
+        """
+        if from_date and to_date:
+            from_date += ' 00:00:00'
+            to_date += ' 23:59:59'
+        else:
+            from_date = datetime.today().strftime("%Y-%m-%d 00:00:00")
+            to_date = datetime.today().strftime("%Y-%m-%d 00:00:00")
+
+        sql = """
+        SELECT
+            a.order_id,
+            a.user_id,
+            b.book_id,
+            b.book_name,
+            b.isbn,
+            b.origin_price,
+            b.actual_price,
+            b.discount,
+            b.order_quantity,
+            b.deliveried_quantity,
+            b.supplier_id,
+            b.warehouse,
+            b.created_at
+        FROM `order` a
+        LEFT JOIN `order_detail` b ON a.order_id = b.order_id
+        WHERE a.delivery_status = :status
+        AND a.order_status = 1
+        AND a.pay_status = 1
+        AND b.isbn = :isbn
+        AND created_at < :to_date
+        AND created_at >= :from_date
+        ORDER BY id desc;
+        """
+
+        params = {
+            'from_date': from_date,
+            'to_date': to_date,
+            'status': status,
+            'isbn': isbn
+        }
+
+        orders = {}
+
+        rows = db.session.execute(sql, params).fetchall()
+        for row in rows:
+            order = {}
+            order['order_id'] = str(row.order_id)
+            order['user_id'] = row.user_id
+            order['book_id'] = row.book_id
+            order['book_name'] = row.book_name
+            order['isbn'] = row.isbn
+            order['origin_price'] = row.origin_price
+            order['actual_price'] = row.actual_price
+            order['discount'] = row.discount
+            order['order_quantity'] = row.order_quantity
+            order['deliveried_quantity'] = row.deliveried_quantity
+            order['supplier_id'] = row.supplier_id
+            order['supplier_name'] = row.warehouse
+            order['created_at'] = str(row.created_at)
+
+            orders[str(row.order_id)] = order
+
+        return orders
