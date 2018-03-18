@@ -491,6 +491,10 @@ def query_ongoing_orders():
                                 "deliveried_quantity": 10（已配送书目总数）
                                 "supplier_id": 3,
                                 "supplier_name": '人文1',
+                                'consignee': row.consignee,
+                                'address': row.address,
+                                'phone': row.phone,
+                                'post_code': row.post_code,
                                 "created_at": '2018-03-02 20:32:13'
                                 }
                             },

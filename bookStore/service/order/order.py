@@ -425,9 +425,14 @@ class OrderService():
             b.deliveried_quantity,
             b.supplier_id,
             b.warehouse,
+            c.consignee,
+            c.address,
+            c.phone,
+            c.post_code,
             b.created_at
         FROM `order` a
         LEFT JOIN `order_detail` b ON a.order_id = b.order_id
+        LEFT JOIN `order_info` c ON a.order_id = c.order_id
         WHERE a.delivery_status = :status
         AND a.order_status = 1
         AND a.pay_status = 1
@@ -461,6 +466,10 @@ class OrderService():
             order['deliveried_quantity'] = row.deliveried_quantity
             order['supplier_id'] = row.supplier_id
             order['supplier_name'] = row.warehouse
+            order['consignee'] = row.consignee
+            order['address'] = row.address
+            order['phone'] = row.phone
+            order['post_code'] = row.post_code
             order['created_at'] = str(row.created_at)
 
             orders[str(row.order_id)] = order
