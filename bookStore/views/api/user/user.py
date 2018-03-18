@@ -48,7 +48,7 @@ def query_user_info(username):
 
 @exports('/user/query/all', methods=['GET'])
 @login_required
-def query_user_all(username):
+def query_user_all():
     """
     @api {GET} /user/query/all 查询系统中所有的卖家
     @apiGroup Users
@@ -56,19 +56,12 @@ def query_user_all(username):
     @apiDescription 查询系统中所有的卖家
     @apiSuccess (200) {String} msg 信息
     @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
-    @apiParam {String} username 用户账户名
     @apiSuccessExample {json} 返回样例:
                    {
                         "status": "ok",
                         "payload":{
-                            "realname": "132",
-                            "username": "bs",
-                            "phone": "pwd",
-                            "mail": "xxx@xxx.com",
-                            "nickname": "guest",
-                            "gender": "23",
-                            "password": "pwd",
-                            "qq": "12312"
+                            "user_id": 123,
+                            "nickname": "guest"
                         }
                     }
     @apiError (400) {String} msg 信息

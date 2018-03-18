@@ -219,10 +219,10 @@ class UserService():
         """
         sql = """
         SELECT
-            id,
+            a.id,
             nickname
         FROM `user` a
-        LEFT JOIN `admin` b
+        LEFT JOIN `admin` b ON a.id = b.user_id
         WHERE b.auth = 2
         AND a.status = 1
         """
@@ -231,7 +231,7 @@ class UserService():
 
         for row in rows:
             user = {}
-            user['id'] = row.id
+            user['user_id'] = row.id
             user['nickname'] = row.nickname
 
             users[row.id] = user
