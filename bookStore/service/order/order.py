@@ -432,9 +432,9 @@ class OrderService():
         AND a.order_status = 1
         AND a.pay_status = 1
         AND b.isbn = :isbn
-        AND created_at < :to_date
-        AND created_at >= :from_date
-        ORDER BY id desc;
+        AND a.created_at < :to_date
+        AND a.created_at >= :from_date
+        ORDER BY b.id desc;
         """
 
         params = {
@@ -454,9 +454,9 @@ class OrderService():
             order['book_id'] = row.book_id
             order['book_name'] = row.book_name
             order['isbn'] = row.isbn
-            order['origin_price'] = row.origin_price
-            order['actual_price'] = row.actual_price
-            order['discount'] = row.discount
+            order['origin_price'] = float(row.origin_price)
+            order['actual_price'] = float(row.actual_price)
+            order['discount'] = float(row.discount)
             order['order_quantity'] = row.order_quantity
             order['deliveried_quantity'] = row.deliveried_quantity
             order['supplier_id'] = row.supplier_id
