@@ -79,9 +79,8 @@ def query_user_all(username):
     users = UserService.query_user_all()
 
     # 过滤自己
-    users.pop(user_id)
+    if users.get(user_id, None):
+        users.pop(user_id)
 
-    if users:
-        return make_api_response(payload=users)
-    else:
-        return make_api_response(message="用户不存在", statusCode=400)
+    return make_api_response(payload=users)
+
