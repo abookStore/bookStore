@@ -48,7 +48,7 @@ def query_book_by_isbn(isbn):
     if isbn:
         book_service = BookService()
         rv = book_service.book_query_by_isbn(isbn)
-        app.logger.info(rv)
+
         # 去除自己的书目
         if current_user.id and rv:
             for k, v in rv.copy().items():
@@ -309,7 +309,7 @@ def book_upload_by_excel():
         # 遍历excel 存入db
         book_service = BookService()
         rv = book_service.add_books_by_excel(user_id, book_file)
-        app.logger.info(rv)
+
         if rv:
             return make_api_response()
 

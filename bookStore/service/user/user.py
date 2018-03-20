@@ -43,6 +43,7 @@ class UserService():
             rv = db.session.query(User).filter_by(
                 username=username).first()
             if rv:
+                payload['id'] = rv.id
                 payload['username'] = rv.username
                 payload['nickname'] = rv.nickname
                 payload['realname'] = rv.realname
@@ -167,7 +168,6 @@ class UserService():
             return m.hexdigest()
 
         # password = md5(md5(password))
-        app.logger.info(password)
 
         user = User.query.filter_by(
             username=username, password=password).first()

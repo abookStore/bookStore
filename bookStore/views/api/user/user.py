@@ -23,6 +23,7 @@ def query_user_info(username):
                    {
                         "status": "ok",
                         "payload":{
+                            "id": 123,
                             "realname": "132",
                             "username": "bs",
                             "phone": "pwd",

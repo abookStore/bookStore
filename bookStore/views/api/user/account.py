@@ -36,7 +36,7 @@ def query_user_info():
                    {"status": "fail", "message": "用户不存在"}
     """
     user_id = current_user.id
-    app.logger.info(user_id)
+
     account_info = AccountService.account_query(user_id=user_id)
 
     if account_info:
@@ -244,7 +244,7 @@ def query_account_info_by_name(name):
     if user is None:
         return make_api_response(message="用户不存在", statusCode=400)
 
-    user_id = user.get('username', 0)
+    user_id = user.get('id', 0)
     account_info = AccountService.account_query(user_id=user_id)
 
     if account_info:

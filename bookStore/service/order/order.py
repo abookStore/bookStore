@@ -365,7 +365,7 @@ class OrderService():
         }
         app.logger.info('status:%s order_id:%s user_id:%s' % (status, order_id, user_id))
         rc = db.session.execute(sql, params).rowcount
-        app.logger.info(rc)
+
         return rc
 
     @staticmethod
