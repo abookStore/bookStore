@@ -42,7 +42,7 @@ def query_user_info():
 
     if userinfo:
         is_admin = UserService.is_admin(user_id=user_id)
-        if is_admin:
+        if is_admin and is_admin == 1:
             is_admin = True
         else:
             is_admin = False
