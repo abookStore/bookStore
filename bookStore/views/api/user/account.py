@@ -5,6 +5,7 @@ from flask import request
 from flask_login import current_user, login_required
 
 from bookStore import app, db
+from bookStore.service.user.user import UserService
 from bookStore.service.user.account import AccountService
 from bookStore.views.api import exports
 from bookStore.views import make_api_response
@@ -239,8 +240,11 @@ def query_account_info_by_name(name):
     @apiErrorExample {json} 返回样例:
                    {"status": "fail", "message": "用户不存在"}
     """
-    user_id = current_user.id
-    app.logger.info(user_id)
+    user = UserService.query_user_by_name(username=name)
+    if user is None:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    user_id = user.get('username', 0)
     account_info = AccountService.account_query(user_id=user_id)
 
     if account_info:
