@@ -223,7 +223,7 @@ class UserService():
             nickname
         FROM `user` a
         LEFT JOIN `admin` b ON a.id = b.user_id
-        WHERE b.auth = 2
+        WHERE b.auth in (2,3)
         AND a.status = 1
         """
         users = {}
@@ -237,3 +237,41 @@ class UserService():
             users[row.id] = user
 
         return users
+
+    @staticmethod
+    def update_user_password_by_name(username, password):
+        """
+        查询所有的用户
+        """
+        sql = """
+        UPDATE `user` SET
+        password = :password
+        WHERE username = :username
+        LIMIT 1;
+        """
+        params = {
+            'username': username,
+            'password': password
+        }
+        db.session.execute(sql, params)
+
+        db.session.commit()
+
+    @staticmethod
+    def update_user_password_by_id(userid, password):
+        """
+        查询所有的用户
+        """
+        sql = """
+        UPDATE `user` SET
+        password = :password
+        WHERE id = :userid
+        LIMIT 1;
+        """
+        params = {
+            'id': userid,
+            'password': password
+        }
+        db.session.execute(sql, params)
+
+        db.session.commit()

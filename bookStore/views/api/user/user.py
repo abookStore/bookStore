@@ -78,3 +78,53 @@ def query_user_all():
 
     return make_api_response(payload=users)
 
+@exports('/user/password/update_by_name', methods=['POST'])
+@login_required
+def update_user_password_by_name():
+    """
+    @api {POST} /user/password/update_by_name 修改用户密码
+    @apiGroup Users
+    @apiVersion 0.0.1
+    @apiDescription 用于管理员更新用户密码
+    @apiParam {String} username 用户账户名
+    @apiParam {String} password 密码
+    @apiParamExample {json} 请求样例:
+                    {
+                        "username": "bs"
+                        "password": "123"
+                    }
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    """
+
+    username = request.json['username']
+    password = request.json['password']
+
+    UserService.update_user_password_by_name(username, password)
+
+    return make_api_response()
+
+
+@exports('/user/password/update_by_id', methods=['POST'])
+@login_required
+def update_user_password_by_id():
+    """
+    @api {POST} /user/password/update_by_id 修改用户密码
+    @apiGroup Users
+    @apiVersion 0.0.1
+    @apiDescription 用于用户更新自己的密码
+    @apiParam {String} password 密码
+    @apiParamExample {json} 请求样例:
+                    {
+                        "password": "123"
+                    }
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    """
+
+    userid = current_user.id
+    password = request.json['password']
+
+    UserService.update_user_password_by_name(userid, password)
+
+    return make_api_response()
