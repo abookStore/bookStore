@@ -618,3 +618,29 @@ def query_order_info_by_id(order_id):
     order = OrderService.order_info_query(order_id)
 
     return make_api_response(payload=order, statusCode=200)
+
+
+@exports('/order/detail/deliveried/<user_id>/<order_id>/<quantity>', methods=['GET'])
+@login_required
+def update_detail_deliveried_with_user(user_id, order_id, quantity):
+    """
+    @api {GET} /order/detail/deliveried/<user_id>/<order_id>/<quantity> 管理员修改已分拣份数
+    @apiGroup Order
+    @apiVersion 0.0.1
+    @apiDescription 管理员修改已分拣份数
+    @apiParam {String} user_id 用户id
+    @apiParam {String} order_id 订单id
+    @apiParam {String} quantity 分拣数目
+    """
+
+    if not user_id:
+        return make_api_response(message="用户不存在", statusCode=400)
+
+    rc = OrderService.update_detail_delivery_quantity(user_id, order_id, quantity)
+
+    if rc > 0:
+        db.session.commit()
+        return make_api_response()
+    else:
+        db.session.rollback()
+        return make_api_response(message='操作失败', statusCode=200)
