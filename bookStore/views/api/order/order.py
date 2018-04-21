@@ -6,6 +6,7 @@ from flask_login import current_user, login_required
 from bookStore import app, db
 from bookStore.mappings.order import Order
 from bookStore.mappings.order_detail import OrderDetail
+from bookStore.service.user.user import UserService
 from bookStore.service.order.order import OrderService
 from bookStore.views.api import exports
 from bookStore.views import make_api_response
@@ -294,7 +295,7 @@ def query_selling_orders():
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
-    order_id = request.json.get('order_id')
+    order_id = request.json.get('orderId')
 
     user_id = current_user.id
     if not user_id:
@@ -345,7 +346,7 @@ def query_sold_orders():
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
-    order_id = request.json.get('order_id')
+    order_id = request.json.get('orderId')
 
     user_id = current_user.id
     if not user_id:
@@ -367,6 +368,7 @@ def query_bought_orders():
     @apiDescription 用于查询用户已购买的订单信息
     @apiParamExample {json} 请求样例：
                     {
+                        ["nickName": "guest"],
                         ["orderId": "123"],
                         ["fromDate": "2018-02-01"],
                         ["toDate": "2018-03-01"]
@@ -396,9 +398,14 @@ def query_bought_orders():
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
-    order_id = request.json.get('order_id')
+    order_id = request.json.get('orderId')
+    nick_name = request.json.get('nickName')
 
     user_id = current_user.id
+
+    if nick_name:
+        user_id = UserService.get_id_by_nickname(nick_name)
+
     if not user_id:
         return make_api_response(message="用户不存在", statusCode=400)
 
@@ -418,6 +425,7 @@ def query_buying_orders():
     @apiDescription 用于查询用户进行中的购货订单信息
     @apiParamExample {json} 请求样例：
                     {
+                        ["nickName": "guest"]
                         ["orderId": "123"],
                         ["fromDate": "2018-02-01"],
                         ["toDate": "2018-03-01"]
@@ -448,6 +456,10 @@ def query_buying_orders():
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
     order_id = request.json.get('order_id')
+    nick_name = request.json.get('nickName')
+
+    if nick_name:
+        user_id = UserService.get_id_by_nickname(nick_name)
 
     user_id = current_user.id
     if not user_id:

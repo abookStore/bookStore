@@ -275,3 +275,15 @@ class UserService():
         db.session.execute(sql, params)
 
         db.session.commit()
+
+    @staticmethod
+    def get_id_by_nickname(nickname):
+        """
+        根据用户昵称查询用户id
+        """
+        user = User.query.filter_by(nickname=nickname).first()
+
+        if user:
+            return user.id
+
+        return None

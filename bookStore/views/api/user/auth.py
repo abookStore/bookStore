@@ -128,8 +128,11 @@ def register():
     if user is not None:
         return make_api_response(message='用户名已存在', statusCode=400)
 
-    user = UserService.query_user_by_phone(phone=phone)
+    user = UserService.get_id_by_nickname(nickname=display_name)
+    if user is not None:
+        return make_api_response(message='昵称已存在', statusCode=400)
 
+    user = UserService.query_user_by_phone(phone=phone)
     if user is not None:
         return make_api_response(message='手机号已存在', statusCode=400)
 
