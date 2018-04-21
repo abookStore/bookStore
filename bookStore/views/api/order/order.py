@@ -647,7 +647,7 @@ def update_detail_deliveried_with_user(user_id, order_id, quantity):
         return make_api_response(message='操作失败', statusCode=200)
 
 
-@exports('/order/admin/query/finished/', methods=['POST'])
+@exports('/order/admin/query/finished', methods=['POST'])
 @login_required
 def admin_query_finished_orders():
     """
