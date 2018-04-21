@@ -475,3 +475,35 @@ class OrderService():
             orders[str(row.order_id)] = order
 
         return orders
+
+    @staticmethod
+    def admin_order_query_by_uid_date(uid, order_id, status, from_date, to_date, order_type):
+        """
+        管理员根据用户查询 全部order
+        """
+
+        sql = """
+        SELECT
+            *
+        FROM `order` a
+        WHERE order_status = :status
+        """
+        if uid:
+            sql += 'AND user_id = :user_id'
+
+        if order_type == 1:
+            sql += 'AND delivery_status = 2\n'
+        if order_type == 2:
+            sql += 'AND delivery_status < 2\n'
+
+        if order_id:
+            sql += 'AND order_id = :order_id\n'
+        if from_date:
+            sql += 'AND a.created_at >= :from_date\n'
+        if to_date:
+            sql += 'AND a.created_at <= :to_date\n'
+
+        sql += 'ORDER BY a.id DESC'
+
+
+        return OrderService._get_order(sql, uid, order_id, status, from_date, to_date)

@@ -295,7 +295,7 @@ def query_selling_orders():
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
-    order_id = request.json.get('orderId')
+    order_id = request.json.get('order_id')
 
     user_id = current_user.id
     if not user_id:
@@ -346,7 +346,7 @@ def query_sold_orders():
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
-    order_id = request.json.get('orderId')
+    order_id = request.json.get('order_id')
 
     user_id = current_user.id
     if not user_id:
@@ -368,7 +368,6 @@ def query_bought_orders():
     @apiDescription 用于查询用户已购买的订单信息
     @apiParamExample {json} 请求样例：
                     {
-                        ["nickName": "guest"],
                         ["orderId": "123"],
                         ["fromDate": "2018-02-01"],
                         ["toDate": "2018-03-01"]
@@ -399,13 +398,8 @@ def query_bought_orders():
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
     order_id = request.json.get('orderId')
-    nick_name = request.json.get('nickName')
 
     user_id = current_user.id
-
-    if nick_name:
-        user_id = UserService.get_id_by_nickname(nick_name)
-
     if not user_id:
         return make_api_response(message="用户不存在", statusCode=400)
 
@@ -425,7 +419,6 @@ def query_buying_orders():
     @apiDescription 用于查询用户进行中的购货订单信息
     @apiParamExample {json} 请求样例：
                     {
-                        ["nickName": "guest"]
                         ["orderId": "123"],
                         ["fromDate": "2018-02-01"],
                         ["toDate": "2018-03-01"]
@@ -455,11 +448,7 @@ def query_buying_orders():
     """
     from_date = request.json.get('fromDate')
     to_date = request.json.get('toDate')
-    order_id = request.json.get('order_id')
-    nick_name = request.json.get('nickName')
-
-    if nick_name:
-        user_id = UserService.get_id_by_nickname(nick_name)
+    order_id = request.json.get('orderId')
 
     user_id = current_user.id
     if not user_id:
@@ -656,3 +645,115 @@ def update_detail_deliveried_with_user(user_id, order_id, quantity):
     else:
         db.session.rollback()
         return make_api_response(message='操作失败', statusCode=200)
+
+
+@exports('/order/admin/query/finished/', methods=['POST'])
+@login_required
+def admin_query_finished_orders():
+    """
+    @api {POST} /order/admin/query/finished/ 管理员查询用户对应已购买的订单信息
+    @apiGroup Order
+    @apiVersion 0.0.1
+    @apiDescription 用于查询用户已购买的订单信息
+    @apiParamExample {json} 请求样例：
+                    {
+                        ["nickName": "guest"],
+                        ["orderId": "123"],
+                        ["fromDate": "2018-02-01"],
+                        ["toDate": "2018-03-01"]
+                    }
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                        {
+                            "payload": {
+                                "12": {
+                                "user_id": 123,
+                                "order_id": 12,
+                                "quantity": 1,
+                                "origin_cost": 22.0,
+                                "pay_status": 1,
+                                "order_status": 1,
+                                "actual_cost": 22.0,
+                                "delivery_status": 1
+                                }
+                            },
+                            "status": "ok"
+                        }
+
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "用户不存在"}
+    """
+    from_date = request.json.get('fromDate')
+    to_date = request.json.get('toDate')
+    order_id = request.json.get('orderId')
+    nick_name = request.json.get('nickName')
+    user_id = None
+
+    if nick_name:
+        user_id = UserService.get_id_by_nickname(nick_name)
+
+        if not user_id:
+            return make_api_response(message="用户不存在", statusCode=400)
+
+    orders = OrderService.admin_order_query_by_uid_date(
+        user_id, order_id, 1, from_date, to_date, 1)
+
+    return make_api_response(payload=orders)
+
+
+@exports('/order/admin/query/ongoing', methods=['POST'])
+@login_required
+def admin_query_ongoing_orders():
+    """
+    @api {POST} /order/admin/query/ongoing 管理员查询用户对应的进行中的购货订单信息
+    @apiGroup Order
+    @apiVersion 0.0.1
+    @apiDescription 用于查询用户进行中的购货订单信息
+    @apiParamExample {json} 请求样例：
+                    {
+                        ["nickName": "guest"],
+                        ["orderId": "123"],
+                        ["fromDate": "2018-02-01"],
+                        ["toDate": "2018-03-01"]
+                    }
+    @apiSuccess (200) {String} msg 信息
+    @apiSuccess (200) {int} code 0 代表无错误 1代表有错误
+    @apiSuccessExample {json} 返回样例:
+                        {
+                            "payload": {
+                                "12": {
+                                "user_id": 123,
+                                "order_id": 12,
+                                "quantity": 1,
+                                "origin_cost": 22.0,
+                                "pay_status": 1,
+                                "order_status": 1,
+                                "actual_cost": 22.0,
+                                "delivery_status": 1
+                                }
+                            },
+                            "status": "ok"
+                        }
+
+    @apiError (400) {String} msg 信息
+    @apiErrorExample {json} 返回样例:
+                   {"status": "fail", "message": "用户不存在"}
+    """
+    from_date = request.json.get('fromDate')
+    to_date = request.json.get('toDate')
+    order_id = request.json.get('orderId')
+    nick_name = request.json.get('nickName')
+    user_id = None
+
+    if nick_name:
+        user_id = UserService.get_id_by_nickname(nick_name)
+
+        if not user_id:
+            return make_api_response(message="用户不存在", statusCode=400)
+
+    orders = OrderService.admin_order_query_by_uid_date(
+        user_id, order_id, 1, from_date, to_date, 2)
+
+    return make_api_response(payload=orders)
