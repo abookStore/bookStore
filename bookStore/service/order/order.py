@@ -489,7 +489,7 @@ class OrderService():
         WHERE order_status = :status
         """
         if uid:
-            sql += 'AND user_id = :user_id'
+            sql += 'AND user_id = :user_id\n'
 
         if order_type == 1:
             sql += 'AND delivery_status = 2\n'
