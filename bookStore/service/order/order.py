@@ -131,6 +131,19 @@ class OrderService():
         raise NotImplementedError('不支持的查询方式')
 
     @staticmethod
+    def uid_query_by_order(order_id):
+        """
+        根据订单号查询用户id
+        """
+        sql = """
+        select
+            user_id
+        from `order`
+        where order_id = :order_id
+        """
+        return db.session.execute(sql, {'order_id': order_id}).scalar()
+
+    @staticmethod
     def order_detail_query(order_id, user_id, sell=False):
         """
         根据订单名查询 订单的详细书目信息

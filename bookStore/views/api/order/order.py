@@ -575,19 +575,15 @@ def update_delivering(order_id):
     @apiVersion 0.0.1
     @apiDescription 订单发货状态变为已发货
     """
-    user_id = current_user.id
+    user_id = OrderService.uid_query_by_order(order_id)
     if not user_id:
         return make_api_response(message="用户不存在", statusCode=400)
 
-    # rc1 = OrderService.update_delivery_status(user_id, order_id, 1)
+    rc1 = OrderService.update_delivery_status(user_id, order_id, 1)
     rc2 = OrderService.update_detail_delivery_quantity(user_id, order_id)
 
-    if rc2 > 0:
-        db.session.commit()
-        return make_api_response()
-    else:
-        db.session.rollback()
-        return make_api_response(message='操作失败', statusCode=200)
+    db.session.commit()
+    return make_api_response()
 
 @exports('/order/info/<order_id>', methods=['GET'])
 @login_required
