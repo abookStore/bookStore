@@ -376,7 +376,7 @@ class OrderService():
             'order_id': order_id,
             'user_id': user_id
         }
-        app.logger.info('status:%s order_id:%s user_id:%s' % (status, order_id, user_id))
+        app.logger.debug('status:%s order_id:%s user_id:%s' % (status, order_id, user_id))
         rc = db.session.execute(sql, params).rowcount
 
         return rc
@@ -449,7 +449,15 @@ class OrderService():
         WHERE a.delivery_status = :status
         AND a.order_status = 1
         AND a.pay_status = 1
-        AND b.isbn = :isbn
+        AND b.deliveried_quantity < b.order_quantity
+        """
+
+        if isbn:
+            sql += """
+            AND b.isbn = :isbn
+            """
+        
+        sql += """
         AND a.created_at < :to_date
         AND a.created_at >= :from_date
         ORDER BY b.id desc;

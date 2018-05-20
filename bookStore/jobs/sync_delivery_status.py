@@ -86,6 +86,6 @@ def update_delivery_status(order_ids):
         return True
     else:
         db.session.rollback()
-        app.logger.info('同步配送状态失败')
+        app.logger.error('同步配送状态失败')
         return False
 

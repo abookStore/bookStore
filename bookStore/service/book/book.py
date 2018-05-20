@@ -272,5 +272,5 @@ class BookService():
             return True
 
         except Exception as e:
-            app.logger.info(e)
+            app.logger.error(e)
             return False
