@@ -144,25 +144,48 @@ class BookService():
 
         return False
 
-    def book_update(self, book_id, book_info):
+    def book_update(self, book_info):
         """
         更新书目信息
         """
-        if book_id and book_info:
-            book = db.session.query(Book).filter_by(id=book_id)
-            if not book:
-                return False
+        if book_info:
 
-            book.isbn = book_info.get('isbn')
-            book.name = book_info.get('name')
-            book.author = book_info.get('author')
-            book.press = book_info.get('press')
-            book.quantity = book_info.get('quantity')
-            book.price = book_info.get('price')
-            book.description = book_info.get('description')
-            book.discount = book_info.get('discount')
-
-            db.session.flush(book)
+            sql = """
+            insert into `book`(
+                name,
+                author,
+                press,
+                isbn,
+                supplier_id,
+                supplier,
+                discount,
+                quantity,
+                description,
+                price
+            )values(
+                :name,
+                :author,
+                :press,
+                :isbn,
+                :supplier_id,
+                :supplier,
+                :discount,
+                :quantity,
+                :description,
+                :price
+            )on duplicate key update
+                name = :name,
+                author = :author,
+                press = :press,
+                isbn = :isbn,
+                supplier_id = :supplier_id,
+                supplier = :supplier,
+                discount = :discount,
+                quantity = :quantity,
+                description = :description,
+                price = :price
+            """
+            db.session.execute(sql, book_info)
             db.session.commit()
 
             return True
@@ -249,25 +272,18 @@ class BookService():
             df = pd.read_excel(file)
             for ix, row in df.iterrows():
                 book = {}
-                book['isbn'] = row.get('ISBN')
-                book['name'] = row.get('书名')
-                book['author'] = row.get('作者', '无')
-                book['press'] = row.get('出版社')
-                book['quantity'] = row.get('数量')
-                book['description'] = row.get('描述', '无')
-                book['price'] = row.get('定价')
-                book['supplier_id'] = user_id
-                book['supplier_name'] = user.get('区域')
-                book['discount'] = row.get('折扣')
+                book['isbn'] = int(row.get('ISBN', ''))
+                book['name'] = str(row.get('书名', ''))
+                book['author'] = str(row.get('作者', '无'))
+                book['press'] = str(row.get('出版社', ''))
+                book['quantity'] = int(row.get('数量', ''))
+                book['description'] = str(row.get('描述', '无'))
+                book['price'] = float(row.get('定价', ''))
+                book['supplier_id'] = str(user_id)
+                book['supplier'] = str(user.get('区域', ''))
+                book['discount'] = float(row.get('折扣', ''))
 
-                # 判断是否存在
-                old_book = self.book_query_by_isbn_and_supplier(
-                    row.get('ISBN'), user_id)
-
-                if old_book:
-                    self.book_update(old_book['id'], book)
-                else:
-                    self.book_add(user_id, book)
+                self.book_update(book)
 
             return True
 

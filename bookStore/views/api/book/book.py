@@ -149,10 +149,10 @@ def book_update():
         'quantity': quantity,
         'price': price,
         'description': description,
-        'discount': discount
+        'discount': discount,
     }
     book_service = BookService()
-    rv = book_service.book_update(book_id, book_info)
+    rv = book_service.book_update(book_info)
 
     if rv:
         return make_api_response()
